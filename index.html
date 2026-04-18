@@ -3,30 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Træoptimerings-App v4.0</title>
+    <title>Træoptimerings-App v4.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Custom styles to complement Tailwind */
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-surface: rgba(255,255,255,0.95);
+            --bg-surface-hover: rgba(255,255,255,1);
+            --accent-primary: #6366f1;    /* indigo-500 */
+            --accent-success: #10b981;    /* emerald-500 */
+            --accent-danger: #ef4444;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+            --shadow-card-hover: 0 4px 16px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Tailwind gray-100 */
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
         }
+
+        /* --- PANELS --- */
         .panel {
-            background-color: white;
-            border-radius: 0.75rem; /* rounded-xl */
-            padding: 1.5rem; /* p-6 */
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-md */
+            background: var(--bg-surface);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border-color);
+            transition: box-shadow 0.2s ease;
         }
+        .panel:hover {
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        /* --- SECTION HEADERS med nummerbadge --- */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        .section-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), #818cf8);
+            color: white;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+
+        /* --- FORM INPUTS --- */
+        .form-input {
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            transition: all 0.15s ease;
+            background: white;
+            color: var(--text-primary);
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+        }
+
+        /* --- BUTTONS --- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            transition: all 0.15s ease;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), #818cf8);
+            color: white;
+            box-shadow: 0 2px 8px rgba(99,102,241,0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, var(--accent-success), #34d399);
+            color: white;
+            box-shadow: 0 2px 8px rgba(16,185,129,0.3);
+        }
+        .btn-success:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(16,185,129,0.4);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            color: white;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+        .btn-ghost:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+        .btn-dark {
+            background: linear-gradient(135deg, #334155, #475569);
+            color: white;
+        }
+        .btn-dark:hover {
+            background: linear-gradient(135deg, #1e293b, #334155);
+        }
+        .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.8rem; }
+
+        /* --- STOCK BAR (Skæreplan) --- */
         .stock-bar {
             display: flex;
-            height: 60px; /* Gjort lidt højere for at få plads til inputs */
-            border: 1px solid #d1d5db; /* border-gray-300 */
-            border-radius: 0.375rem; /* rounded-md */
+            height: 56px;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
             overflow: hidden;
-            background-color: #e5e7eb; /* gray-200 */
+            background-color: #f1f5f9;
         }
         .piece-wrapper {
             display: flex;
@@ -40,19 +162,18 @@
             align-items: center;
             justify-content: center;
             padding: 0.25rem;
-            color: #1f2937;
+            color: #1e293b;
             line-height: 1.2;
             overflow: hidden;
         }
-        
         .margin-segment {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background-color: rgba(239, 68, 68, 0.15); /* Svag rød for at markere at det skæres væk */
+            background-color: rgba(239, 68, 68, 0.15);
             border-left: 1px dashed rgba(255,255,255,0.6);
-            position: relative; /* Gør at inputtet kan centreres præcist */
+            position: relative;
         }
         .margin-input {
             background: transparent;
@@ -60,16 +181,16 @@
             text-align: center;
             font-size: 0.75rem;
             font-weight: bold;
-            width: 32px; /* Fast bredde så man altid kan klikke på det */
-            position: absolute; /* Løfter teksten ud af den smalle boks */
+            width: 32px;
+            position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
             cursor: pointer;
             outline: none;
-            color: #b91c1c; /* Mørkerød tekst */
+            color: #b91c1c;
             text-shadow: 1px 1px 0px rgba(255,255,255,0.9), -1px -1px 0px rgba(255,255,255,0.9), 1px -1px 0px rgba(255,255,255,0.9), -1px 1px 0px rgba(255,255,255,0.9);
-            z-index: 1; /* Sat ned til 1 så den ikke ligger over sticky knapper */
+            z-index: 1;
         }
         .margin-input:focus {
             border-bottom: 1px solid #b91c1c;
@@ -77,40 +198,45 @@
             text-shadow: none;
             z-index: 2;
         }
-
         .waste-segment {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem; /* text-xs */
-            color: #4b5563; /* gray-600 */
-            background-color: #f3f4f6; /* gray-100 */
-            background-image: repeating-linear-gradient(45deg, #e5e7eb, #e5e7eb 10px, #f3f4f6 10px, #f3f4f6 20px);
+            font-size: 0.75rem;
+            color: #64748b;
+            background-color: #f1f5f9;
+            background-image: repeating-linear-gradient(45deg, #e2e8f0, #e2e8f0 10px, #f1f5f9 10px, #f1f5f9 20px);
             line-height: 1.2;
             overflow: hidden;
         }
-        
-        /* Inline input felter i liste og visualisering */
+
+        /* --- INLINE EDIT (Professionel: ren tekst, subtil hover) --- */
         .inline-edit, .editable {
             background: transparent;
             border: none;
-            border-bottom: 1px dashed rgba(0,0,0,0.3);
+            border-bottom: 1px solid transparent;
             text-align: center;
             min-width: 0;
             outline: none;
             color: inherit;
+            cursor: default;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: all 0.15s ease;
+        }
+        .inline-edit:hover, .editable:hover {
+            background: rgba(99,102,241,0.06);
             cursor: pointer;
-            padding: 0;
-            margin-bottom: 2px;
-            transition: all 0.2s;
         }
         .inline-edit:focus, .editable:focus {
-            border-bottom: 1px solid rgba(0,0,0,0.8);
-            background: rgba(255,255,255,0.4);
+            background: white;
+            border-bottom: 2px solid var(--accent-primary);
             cursor: text;
+            box-shadow: 0 1px 4px rgba(99,102,241,0.15);
         }
-        /* Skjul browserens indbyggede op/ned pile for tal-inputs */
+
+        /* Skjul browser-pile for tal-inputs */
         .inline-edit::-webkit-outer-spin-button,
         .inline-edit::-webkit-inner-spin-button,
         .editable::-webkit-outer-spin-button,
@@ -124,49 +250,79 @@
             -moz-appearance: textfield;
         }
 
-        /* Print-specific styles */
+        /* --- LISTEVISNING (emner/lager) --- */
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.15s ease;
+            list-style: none;
+            gap: 0.5rem;
+        }
+        .list-item:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        .list-item .remove-btn {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: color 0.15s;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .list-item .remove-btn:hover {
+            color: var(--accent-danger);
+        }
+
+        /* --- PRINT STYLES --- */
         @media print {
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            body { padding: 1cm; margin: 0; background-color: white; }
+            body { padding: 0.8cm; margin: 0; background: white !important; }
             .print-hide { display: none !important; }
-            .print-container { display: block !important; width: 100% !important; max-width: 100% !important; box-shadow: none; border: none;}
+            .print-container { display: block !important; width: 100% !important; max-width: 100% !important; box-shadow: none; border: none; }
+            .panel { box-shadow: none !important; border: none !important; padding: 0 !important; }
             #results-container { box-shadow: none !important; border: none !important; padding: 0 !important; min-height: 0 !important; }
-            
+
             #print-header {
                 display: block !important;
                 text-align: center;
                 font-size: 1.5rem;
                 font-weight: bold;
-                padding-bottom: 1rem;
-                margin-bottom: 1rem;
+                padding-bottom: 0.75rem;
+                margin-bottom: 0.75rem;
                 border-bottom: 2px solid #000;
                 width: 100%;
             }
 
-            .stock-bar { border: 1px solid #000 !important; background-color: #fff !important; }
+            /* Forhindre at stokke splittes over sider */
+            .stock-block {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            .stock-bar { border: 1px solid #000 !important; background-color: #fff !important; height: 48px !important; }
             .piece-wrapper { border-right: 1px solid #666 !important; }
-            .piece-segment {
-                color: #000 !important;
-            }
-            .margin-segment {
-                border-left: 1px dashed #666 !important;
-                background-color: #fca5a5 !important;
-            }
+            .piece-segment { color: #000 !important; }
+            .margin-segment { border-left: 1px dashed #666 !important; background-color: #fca5a5 !important; }
             .margin-input { color: #000 !important; text-shadow: none !important; }
-            .inline-edit, .editable, .margin-input { border: none !important; pointer-events: none; }
+            .inline-edit, .editable, .margin-input { border: none !important; pointer-events: none; background: transparent !important; box-shadow: none !important; }
             .waste-segment {
                 background-image: repeating-linear-gradient(45deg, #ccc, #ccc 4px, #fff 4px, #fff 8px) !important;
                 background-color: #fff !important;
                 border-left: 1px solid #666 !important;
                 color: #000 !important;
             }
-            .page-break-before {
-                page-break-before: always;
-            }
-            svg { display: none !important; } /* Skjul blyanter på print */
+            .page-break-before { page-break-before: always; }
+            svg { display: none !important; }
         }
     </style>
 </head>
@@ -174,132 +330,155 @@
 
     <div class="max-w-7xl mx-auto print-container">
         <header class="text-center mb-8 print-hide">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Træoptimerings-App v4.0</h1>
-            <p class="text-gray-600 mt-2">Med Deling, Udskrift, Indkøbs- og Bæredygtighedsanalyse</p>
-            <p id="version-info" class="text-xs text-gray-400 mt-1"></p>
+            <div class="inline-block mb-4 px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-semibold tracking-wider uppercase">v4.1</div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Træoptimerings-App</h1>
+            <p class="text-slate-400 mt-2 text-sm">Deling · Udskrift · Indkøbs- og Bæredygtighedsanalyse</p>
+            <p id="version-info" class="text-xs text-slate-500 mt-1"></p>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-            <div class="flex flex-col gap-6 print-hide">
+            <div class="flex flex-col gap-5 print-hide">
                 <div class="panel">
-                    <h2 class="text-xl font-semibold text-gray-700 mb-4">Projektstyring</h2>
+                    <div class="section-header">
+                        <div class="section-badge" style="background: linear-gradient(135deg, #334155, #475569);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                        </div>
+                        <h2 class="section-title">Projektstyring</h2>
+                    </div>
                     <div class="space-y-4">
                          <div>
-                            <label for="print-project-name" class="block text-sm font-medium text-gray-700">Projektnavn (til udskrift)</label>
-                            <input type="text" id="print-project-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="f.eks. Legehus til haven">
+                            <label for="print-project-name" class="block text-xs font-medium text-slate-500 mb-1">Projektnavn (til udskrift)</label>
+                            <input type="text" id="print-project-name" class="form-input w-full" placeholder="f.eks. Legehus til haven">
                         </div>
-                        <hr>
-                        <h3 class="text-md font-semibold text-gray-600 pt-2">Lokal Browser-lagring</h3>
+                        <hr class="border-slate-200">
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Lokal Browser-lagring</p>
                         <div>
-                            <label for="project-name" class="block text-sm font-medium text-gray-700">Gem Nuværende Projekt Som</label>
-                            <div class="flex gap-2 mt-1">
-                                <input type="text" id="project-name" class="flex-grow block w-full rounded-md border-gray-300 shadow-sm" placeholder="f.eks. Carport Tag">
-                                <button id="save-project-btn" class="rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700">Gem</button>
+                            <label for="project-name" class="block text-xs font-medium text-slate-500 mb-1">Gem Nuværende Projekt Som</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="project-name" class="form-input flex-grow" placeholder="f.eks. Carport Tag">
+                                <button id="save-project-btn" class="btn btn-primary btn-sm">Gem</button>
                             </div>
                         </div>
                         <div>
-                            <label for="saved-projects-select" class="block text-sm font-medium text-gray-700">Indlæs Gemt Projekt</label>
-                            <div class="flex gap-2 mt-1">
-                                <select id="saved-projects-select" class="flex-grow block w-full rounded-md border-gray-300 shadow-sm"></select>
-                                <button id="load-project-btn" class="rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-green-700">Indlæs</button>
-                                <button id="delete-project-btn" class="rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700">Slet</button>
+                            <label for="saved-projects-select" class="block text-xs font-medium text-slate-500 mb-1">Indlæs Gemt Projekt</label>
+                            <div class="flex gap-2">
+                                <select id="saved-projects-select" class="form-input flex-grow"></select>
+                                <button id="load-project-btn" class="btn btn-success btn-sm">Indlæs</button>
+                                <button id="delete-project-btn" class="btn btn-danger btn-sm">Slet</button>
                             </div>
                         </div>
-                        <hr>
-                        <h3 class="text-md font-semibold text-gray-600 pt-2">Fysisk Fil (Deling)</h3>
+                        <hr class="border-slate-200">
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Fysisk Fil (Deling)</p>
                         <div class="flex gap-2">
-                            <button id="save-file-btn" class="flex-1 rounded-md border border-transparent bg-gray-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-800">Gem til Fil</button>
-                            <button id="load-file-btn" class="flex-1 rounded-md border border-transparent bg-gray-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-800">Indlæs fra Fil</button>
+                            <button id="save-file-btn" class="btn btn-dark btn-sm flex-1">Gem til Fil</button>
+                            <button id="load-file-btn" class="btn btn-dark btn-sm flex-1">Indlæs fra Fil</button>
                             <input type="file" id="file-input" class="hidden" accept=".json,application/json">
                         </div>
                     </div>
                 </div>
 
                 <div class="panel">
-                    <h2 class="text-xl font-semibold text-gray-700 mb-4">1. Trædimensioner</h2>
-                    <form id="add-dimension-form" class="flex gap-4 items-end">
+                    <div class="section-header">
+                        <div class="section-badge">1</div>
+                        <h2 class="section-title">Trædimensioner</h2>
+                    </div>
+                    <form id="add-dimension-form" class="flex gap-3 items-end">
                         <div class="flex-grow">
-                            <label for="dimension-name" class="block text-sm font-medium text-gray-700">Ny dimension</label>
-                            <input type="text" id="dimension-name" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Skriv her (f.eks. 45x195)">
+                            <label for="dimension-name" class="block text-xs font-medium text-slate-500 mb-1">Ny dimension</label>
+                            <input type="text" id="dimension-name" name="name" required class="form-input w-full" placeholder="f.eks. 45x195">
                         </div>
-                        <button type="submit" class="h-10 justify-center rounded-md border border-transparent bg-gray-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-700">Tilføj</button>
+                        <button type="submit" class="btn btn-ghost btn-sm">Tilføj</button>
                     </form>
-                    <div id="dimensions-list" class="mt-6 space-y-2"></div>
+                    <div id="dimensions-list" class="mt-4 space-y-1.5"></div>
                 </div>
 
                 <div class="panel">
-                    <h2 class="text-xl font-semibold text-gray-700 mb-4">2. Ønsket Emner</h2>
-                    <form id="add-piece-form" class="grid grid-cols-1 sm:grid-cols-6 gap-4 items-end">
+                    <div class="section-header">
+                        <div class="section-badge">2</div>
+                        <h2 class="section-title">Ønsket Emner</h2>
+                    </div>
+                    <form id="add-piece-form" class="grid grid-cols-1 sm:grid-cols-6 gap-3 items-end">
                         <div class="sm:col-span-2">
-                            <label for="piece-dimension-select" class="block text-sm font-medium text-gray-700">Dimension</label>
-                            <select id="piece-dimension-select" name="dimension" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></select>
+                            <label for="piece-dimension-select" class="block text-xs font-medium text-slate-500 mb-1">Dimension</label>
+                            <select id="piece-dimension-select" name="dimension" class="form-input w-full"></select>
                         </div>
                          <div class="sm:col-span-2">
-                            <label for="piece-tag" class="block text-sm font-medium text-gray-700">Emne</label>
-                            <input type="text" id="piece-tag" name="tag" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="f.eks. Spær">
+                            <label for="piece-tag" class="block text-xs font-medium text-slate-500 mb-1">Emne</label>
+                            <input type="text" id="piece-tag" name="tag" class="form-input w-full" placeholder="f.eks. Spær">
                         </div>
                         <div>
-                            <label for="piece-length" class="block text-sm font-medium text-gray-700">Længde (mm)</label>
-                            <input type="number" id="piece-length" name="length" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="2400">
+                            <label for="piece-length" class="block text-xs font-medium text-slate-500 mb-1">Længde (mm)</label>
+                            <input type="number" id="piece-length" name="length" required class="form-input w-full" placeholder="2400">
                         </div>
                         <div>
-                            <label for="piece-amount" class="block text-sm font-medium text-gray-700">Antal</label>
-                            <input type="number" id="piece-amount" name="amount" value="1" min="1" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            <label for="piece-amount" class="block text-xs font-medium text-slate-500 mb-1">Antal</label>
+                            <input type="number" id="piece-amount" name="amount" value="1" min="1" required class="form-input w-full">
                         </div>
                         <div class="sm:col-span-6">
-                             <button type="submit" class="w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">Tilføj Emne</button>
+                             <button type="submit" class="btn btn-primary w-full">Tilføj Emne</button>
                         </div>
                     </form>
-                    <div id="pieces-list" class="mt-6 space-y-2"></div>
+                    <div id="pieces-list" class="mt-4 space-y-1.5"></div>
                 </div>
 
                 <div class="panel">
-                    <h2 class="text-xl font-semibold text-gray-700 mb-4">3. Lagerlængder (Dit nuværende lager)</h2>
-                    <form id="add-stock-form" class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
+                    <div class="section-header">
+                        <div class="section-badge">3</div>
+                        <h2 class="section-title">Lagerlængder</h2>
+                    </div>
+                    <form id="add-stock-form" class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
                         <div class="sm:col-span-2">
-                            <label for="stock-dimension-select" class="block text-sm font-medium text-gray-700">Dimension</label>
-                             <select id="stock-dimension-select" name="dimension" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></select>
+                            <label for="stock-dimension-select" class="block text-xs font-medium text-slate-500 mb-1">Dimension</label>
+                             <select id="stock-dimension-select" name="dimension" class="form-input w-full"></select>
                         </div>
                         <div>
-                            <label for="stock-length-select" class="block text-sm font-medium text-gray-700">Standardlængde</label>
-                            <select id="stock-length-select" name="length" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></select>
+                            <label for="stock-length-select" class="block text-xs font-medium text-slate-500 mb-1">Standardlængde</label>
+                            <select id="stock-length-select" name="length" required class="form-input w-full"></select>
                         </div>
                         <div>
-                            <label for="stock-amount" class="block text-sm font-medium text-gray-700">Antal</label>
-                            <input type="number" id="stock-amount" name="amount" value="1" min="1" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            <label for="stock-amount" class="block text-xs font-medium text-slate-500 mb-1">Antal</label>
+                            <input type="number" id="stock-amount" name="amount" value="1" min="1" required class="form-input w-full">
                         </div>
                         <div class="sm:col-span-4">
-                            <button type="submit" class="w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">Tilføj Lagerlængde</button>
+                            <button type="submit" class="btn btn-primary w-full">Tilføj Lagerlængde</button>
                         </div>
                     </form>
-                    <div id="stock-list" class="mt-6 space-y-2"></div>
+                    <div id="stock-list" class="mt-4 space-y-1.5"></div>
                 </div>
 
                 <div class="panel">
-                    <h2 class="text-xl font-semibold text-gray-700 mb-4">4. Indstillinger (Standard)</h2>
+                    <div class="section-header">
+                        <div class="section-badge">4</div>
+                        <h2 class="section-title">Indstillinger</h2>
+                    </div>
                     <div>
-                        <label for="safety-margin" class="block text-sm font-medium text-gray-700">Standard Ekstra (mm)</label>
-                        <p class="text-xs text-gray-500 mb-1">Lægges til hvert emne for at sikre plads til snit. Kan overskrives pr. emne i skæreplanen.</p>
-                        <input type="number" id="safety-margin" value="100" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <label for="safety-margin" class="block text-xs font-medium text-slate-500 mb-1">Standard Ekstra (mm)</label>
+                        <p class="text-xs text-slate-400 mb-2">Lægges til hvert emne for at sikre plads til snit. Kan overskrives pr. emne i skæreplanen.</p>
+                        <input type="number" id="safety-margin" value="100" class="form-input w-full">
                     </div>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-6">
-                <div class="sticky top-8 z-50 print-hide">
-                     <button id="calculate-btn-desktop" class="w-full justify-center rounded-lg border border-transparent bg-green-600 py-4 px-6 text-lg font-bold text-white shadow-lg hover:bg-green-700 transition-transform transform hover:scale-105">Beregn Optimering</button>
-                     <button id="print-btn-desktop" class="hidden mt-4 w-full justify-center items-center gap-2 rounded-lg border border-gray-400 bg-white py-3 px-6 text-base font-bold text-gray-700 shadow-md hover:bg-gray-100">
+            <div class="flex flex-col gap-5">
+                <div class="sticky top-4 z-50 print-hide flex flex-col gap-3 bg-slate-900/95 backdrop-blur-sm rounded-xl p-3 shadow-lg border border-slate-700/50">
+                     <button id="calculate-btn-desktop" class="btn btn-success w-full py-4 text-lg font-bold shadow-lg hover:shadow-xl transition-all">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                         Beregn Optimering
+                     </button>
+                     <button id="print-btn-desktop" class="hidden btn btn-ghost w-full py-3">
                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
                          Print Skæreplan
                     </button>
                 </div>
                 <div id="results-container" class="panel min-h-[300px]">
                      <div id="print-header" class="hidden"></div>
-                     <div id="results-placeholder" class="flex flex-col items-center justify-center h-full text-center text-gray-500">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                         <p class="mt-4 font-semibold">Resultaterne vil blive vist her.</p>
-                         <p class="text-sm">Indtast data og tryk på 'Beregn Optimering'.</p>
+                     <div id="results-placeholder" class="flex flex-col items-center justify-center h-full text-center py-16">
+                         <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                         </div>
+                         <p class="font-semibold text-slate-500">Resultaterne vil blive vist her</p>
+                         <p class="text-sm text-slate-400 mt-1">Indtast data og tryk på 'Beregn Optimering'</p>
                      </div>
                 </div>
                 <div id="sustainability-report" class="panel hidden print-hide">
@@ -434,10 +613,12 @@
         function handleAddPiece(e) {
             e.preventDefault();
             const fd = new FormData(e.target);
+            const lastDim = fd.get('dimension');
+            const lastTag = fd.get('tag').trim();
             const piece = { 
                 id: nextPieceId++, 
-                dimension: fd.get('dimension'), 
-                tag: fd.get('tag').trim() || 'Emne', 
+                dimension: lastDim, 
+                tag: lastTag || 'Emne', 
                 length: parseInt(fd.get('length')), 
                 amount: parseInt(fd.get('amount')), 
                 customMargin: null 
@@ -448,17 +629,25 @@
             }
             renderPiecesList();
             e.target.reset();
+            // Husk sidst brugte dimension og tag
+            pieceDimensionSelect.value = lastDim;
+            document.getElementById('piece-tag').value = lastTag;
             document.getElementById('piece-length').focus();
         }
 
         function handleAddStock(e) {
             e.preventDefault();
             const fd = new FormData(e.target);
-            const stock = { id: nextStockId++, dimension: fd.get('dimension'), length: parseInt(fd.get('length')), amount: parseInt(fd.get('amount')) };
+            const lastDim = fd.get('dimension');
+            const lastLen = fd.get('length');
+            const stock = { id: nextStockId++, dimension: lastDim, length: parseInt(lastLen), amount: parseInt(fd.get('amount')) };
             if (!stock.dimension || isNaN(stock.length)) return;
             stockLengths.push(stock);
             renderStockList();
             e.target.reset();
+            // Husk sidst brugte dimension og længde
+            stockDimensionSelect.value = lastDim;
+            stockLengthSelect.value = lastLen;
         }
 
         function removePiece(id) { requiredPieces = requiredPieces.filter(p => p.id !== id); renderPiecesList(); }
@@ -536,7 +725,7 @@
             pieceDimensionSelect.innerHTML = html; stockDimensionSelect.innerHTML = html; 
         }
         function renderDimensionsList() {
-            dimensionsListContainer.innerHTML = availableDimensions.map(d => `<div class="flex justify-between items-center p-2 bg-gray-50 rounded-md border border-gray-200"><span class="font-mono text-sm">${d}</span><button onclick="removeDimension('${d}')" class="text-red-500 font-semibold text-sm">Fjern</button></div>`).join('') || '<p class="text-sm text-gray-500">Ingen dimensioner.</p>';
+            dimensionsListContainer.innerHTML = availableDimensions.map(d => `<div class="list-item"><span class="font-mono text-sm font-medium">${d}</span><button onclick="removeDimension('${d}')" class="remove-btn">Fjern</button></div>`).join('') || '<p class="text-sm text-slate-400">Ingen dimensioner.</p>';
         }
         function renderPiecesList() {
             const grouped = {};
@@ -546,21 +735,22 @@
                 grouped[key].amount++; grouped[key].ids.push(p.id);
             });
             piecesListContainer.innerHTML = Object.values(grouped).map(p => `
-                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-md border border-gray-200">
-                    <div class="flex-grow">
-                        <div class="font-mono text-sm flex items-center gap-2 mb-1">
-                            <div class="flex items-center group"><input type="number" class="inline-edit w-8 font-bold" value="${p.amount}" onchange='updateGroupAmount(${JSON.stringify(p.ids)}, this.value)'>stk. ${svgPencil}</div>
-                            <span>|</span> <span>${p.dimension}</span> <span>|</span>
-                            <div class="flex items-center group"><input type="number" class="inline-edit w-14 font-bold" value="${p.length}" onchange='updateGroupLength(${JSON.stringify(p.ids)}, this.value)'>mm ${svgPencil}</div>
-                        </div>
-                        <div class="flex items-center group"><input type="text" class="inline-edit text-xs text-indigo-600 font-semibold w-full text-left" value="${p.tag}" onchange='updateGroupTag(${JSON.stringify(p.ids)}, this.value)'>${svgPencil}</div>
+                <div class="list-item">
+                    <div class="font-mono text-sm flex items-center gap-1.5 flex-grow min-w-0 flex-nowrap">
+                        <input type="number" class="inline-edit w-8 font-bold flex-shrink-0" value="${p.amount}" onchange='updateGroupAmount(${JSON.stringify(p.ids)}, this.value)'>
+                        <span class="text-slate-300 flex-shrink-0">×</span>
+                        <span class="font-semibold text-slate-700 flex-shrink-0">${p.dimension}</span>
+                        <span class="text-slate-200 flex-shrink-0">|</span>
+                        <input type="number" class="inline-edit w-14 font-bold flex-shrink-0" value="${p.length}" onchange='updateGroupLength(${JSON.stringify(p.ids)}, this.value)'><span class="text-slate-400 text-xs flex-shrink-0">mm</span>
+                        <span class="text-slate-200 flex-shrink-0">|</span>
+                        <input type="text" class="inline-edit text-indigo-600 font-semibold text-left truncate min-w-0" value="${p.tag}" onchange='updateGroupTag(${JSON.stringify(p.ids)}, this.value)' style="flex: 1 1 60px; max-width: 120px;">
                     </div>
-                    <button onclick='${JSON.stringify(p.ids)}.forEach(id => removePiece(id))' class="text-red-500 text-sm font-semibold">Fjern</button>
+                    <button onclick='${JSON.stringify(p.ids)}.forEach(id => removePiece(id))' class="remove-btn flex-shrink-0 ml-2">Fjern</button>
                 </div>
-            `).join('') || '<p class="text-sm text-gray-500">Ingen emner.</p>';
+            `).join('') || '<p class="text-sm text-slate-400">Ingen emner.</p>';
         }
         function renderStockList() {
-            stockListContainer.innerHTML = stockLengths.map(s => `<div class="flex justify-between items-center p-2 bg-gray-50 rounded-md border border-gray-200"><span class="font-mono text-sm">${s.amount} stk. | ${s.dimension} | ${s.length} mm</span><button onclick="removeStock(${s.id})" class="text-red-500 text-sm font-semibold">Fjern</button></div>`).join('') || '<p class="text-sm text-gray-500">Ingen lagerlængder.</p>';
+            stockListContainer.innerHTML = stockLengths.map(s => `<div class="list-item"><span class="font-mono text-sm font-medium">${s.amount} stk. <span class="text-slate-300">·</span> ${s.dimension} <span class="text-slate-300">·</span> ${s.length} mm</span><button onclick="removeStock(${s.id})" class="remove-btn">Fjern</button></div>`).join('') || '<p class="text-sm text-slate-400">Ingen lagerlængder.</p>';
         }
         function renderResults(res) {
             const summary = `<div class="mb-8 p-4 bg-gray-50 rounded-lg border text-sm"><h3 class="text-lg font-semibold mb-3">Samlet Oversigt</h3><div class="grid grid-cols-2 gap-2"><span>Anvendt træ:</span><span class="font-bold text-right">${(res.totalUsedStockLength/1000).toFixed(2)} m</span><span>Spild:</span><span class="font-bold text-red-600 text-right">${(res.totalWaste/1000).toFixed(2)} m (${res.wastePercentage.toFixed(1)}%)</span></div></div>`;
@@ -579,10 +769,19 @@
                 let totalPiecesInDim = 0;
                 dimPlan.forEach(stock => { totalPiecesInDim += stock.pieces.length; });
 
-                // Tjek om alle lagerlængder er ens
-                const firstLen = dimPlan[0].originalLength;
-                const allSameLength = dimPlan.every(s => s.originalLength === firstLen);
-                const lengthLabel = allSameLength ? `á ${firstLen} mm` : '(blandet)';
+                // Optæl lagerlængder pr. type
+                const lengthCounts = {};
+                dimPlan.forEach(s => {
+                    if (!lengthCounts[s.originalLength]) lengthCounts[s.originalLength] = 0;
+                    lengthCounts[s.originalLength]++;
+                });
+                const uniqueLengths = Object.keys(lengthCounts);
+                let lengthLabel;
+                if (uniqueLengths.length === 1) {
+                    lengthLabel = `á ${uniqueLengths[0]} mm`;
+                } else {
+                    lengthLabel = uniqueLengths.sort((a,b) => a-b).map(l => `${lengthCounts[l]} stk á ${l} mm`).join(', ');
+                }
 
                 // Beregn samlet spild for denne dimension
                 let dimWaste = 0;
@@ -632,14 +831,14 @@
                 // --- Visuelle stokke ---
                 dimPlan.forEach((stock, i) => {
                     const piecesOnStock = stock.pieces.length;
-                    planHTML += `<div class="mt-3">
+                    planHTML += `<div class="mt-3 stock-block">
                         <div class="flex items-baseline gap-2 mb-1">
-                            <span class="text-xs font-bold text-gray-700">Lagerlængde ${i+1} af ${stockCount}</span>
-                            <span class="text-xs text-gray-400">—</span>
-                            <span class="text-xs text-gray-500">${stock.originalLength} mm</span>
-                            <span class="text-xs text-gray-400">—</span>
-                            <span class="text-xs text-gray-500">${piecesOnStock} emne${piecesOnStock !== 1 ? 'r' : ''}</span>
-                            ${stock.waste > 0 ? `<span class="text-xs text-red-500 ml-auto">Spild: ${stock.waste} mm</span>` : '<span class="text-xs text-green-600 ml-auto">Intet spild ✓</span>'}
+                            <span class="text-xs font-bold text-slate-700">Lagerlængde ${i+1} af ${stockCount}</span>
+                            <span class="text-xs text-slate-300">—</span>
+                            <span class="text-xs text-slate-500">${stock.originalLength} mm</span>
+                            <span class="text-xs text-slate-300">—</span>
+                            <span class="text-xs text-slate-500">${piecesOnStock} emne${piecesOnStock !== 1 ? 'r' : ''}</span>
+                            ${stock.waste > 0 ? `<span class="text-xs text-red-500 ml-auto">Spild: ${stock.waste} mm</span>` : '<span class="text-xs text-emerald-600 ml-auto">Intet spild ✓</span>'}
                         </div>
                         <div class="stock-bar">`;
 
@@ -664,7 +863,7 @@
         }
 
         // --- ANDRE FUNKTIONER ---
-        function renderError(m) { resultsContainer.innerHTML = `<div class="p-4 bg-red-50 text-red-600 rounded-lg border border-red-200 font-semibold">${m}</div>`; }
+        function renderError(m) { resultsContainer.innerHTML = `<div class="p-4 bg-red-50 text-red-700 rounded-xl border border-red-200 font-semibold text-sm">${m}</div>`; }
         function showPrintButtons(s) { printBtnDesktop.classList.toggle('hidden', !s); }
         function handlePrint() { window.print(); }
         function handleSaveProject() { 
@@ -707,7 +906,7 @@
         function handleSaveToFile() { 
             const projectName = printProjectNameInput.value.trim() || 'trae-projekt';
             const filename = `${projectName.replace(/[^a-z0-9æøå]/gi, '_').toLowerCase()}.json`;
-            const projectData = { availableDimensions, requiredPieces, stockLengths, safetyMargin: safetyMarginInput.value, printProjectName: printProjectNameInput.value, nextPieceId, nextStockId, version: '4.0' };
+            const projectData = { availableDimensions, requiredPieces, stockLengths, safetyMargin: safetyMarginInput.value, printProjectName: printProjectNameInput.value, nextPieceId, nextStockId, version: '4.1' };
             const dataStr = JSON.stringify(projectData, null, 2);
             const dataBlob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(dataBlob);
