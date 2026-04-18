@@ -1527,11 +1527,11 @@
                     if (!groupedBestillinger[key]) groupedBestillinger[key] = { ...b, amount: 0 };
                     groupedBestillinger[key].amount += b.amount;
                 });
-                let emailBody = 'Indkøbsliste (Manglende træ):\\n\\n';
+                let emailBody = 'Indkøbsliste (Manglende træ):\n\n';
                 for (const key in groupedBestillinger) {
                     const item = groupedBestillinger[key];
                     aktueltIndkoebHTML += `<li class="text-sm"><span class="font-semibold">${item.dimension}</span>: Køb ${item.amount} stk. á ${item.length} mm</li>`;
-                    emailBody += `- ${item.dimension}: Køb ${item.amount} stk. á ${item.length} mm\\n`;
+                    emailBody += `- ${item.dimension}: Køb ${item.amount} stk. á ${item.length} mm\n`;
                 }
 
                 const emailLink = `mailto:?subject=Indkøbsliste fra Træoptimerings-App&body=${encodeURIComponent(emailBody)}`;
@@ -1640,7 +1640,7 @@
             printWindow.document.write(`
                 <html>
                     <head>
-                        <title>Indkøbsliste - \${printProject}</title>
+                        <title>Indkøbsliste - ${printProject}</title>
                         <style>
                             body { font-family: system-ui, -apple-system, sans-serif; padding: 2rem; color: #1e293b; max-width: 800px; margin: 0 auto; }
                             h1 { border-bottom: 2px solid #cbd5e1; padding-bottom: 0.5rem; margin-bottom: 1.5rem; color: #0f172a; font-size: 1.5rem; }
@@ -1652,11 +1652,11 @@
                     </head>
                     <body>
                         <div class="header">
-                            <span><strong>Projekt:</strong> \${printProject}</span>
-                            <span><strong>Dato:</strong> \${new Date().toLocaleDateString('da-DK')}</span>
+                            <span><strong>Projekt:</strong> ${printProject}</span>
+                            <span><strong>Dato:</strong> ${new Date().toLocaleDateString('da-DK')}</span>
                         </div>
                         <h1>Indkøbsliste</h1>
-                        <ul>\${listHtml}</ul>
+                        <ul>${listHtml}</ul>
                         <script>
                             window.onload = function() { setTimeout(() => { window.print(); window.close(); }, 250); }
                         <\\/script>
