@@ -1360,7 +1360,7 @@
             const projects = getSavedProjects();
             const data = projects[name];
             if (data) {
-                availableDimensions = data.availableDimensions || [];
+                availableDimensions = (data.availableDimensions && data.availableDimensions.length > 0) ? data.availableDimensions : ['45x95', '45x120', '45x145'];
                 requiredPieces = data.requiredPieces || [];
                 stockLengths = data.stockLengths || [];
                 safetyMarginInput.value = data.safetyMargin || 100;
@@ -1403,8 +1403,8 @@
             reader.onload = function (evt) {
                 try {
                     const data = JSON.parse(evt.target.result);
-                    if (!data.availableDimensions || !data.requiredPieces) throw new Error('Ugyldigt filformat.');
-                    availableDimensions = data.availableDimensions || [];
+                    if (!data.requiredPieces) throw new Error('Ugyldigt filformat: Mangler emner.');
+                    availableDimensions = (data.availableDimensions && data.availableDimensions.length > 0) ? data.availableDimensions : ['45x95', '45x120', '45x145'];
                     requiredPieces = data.requiredPieces || [];
                     stockLengths = data.stockLengths || [];
                     safetyMarginInput.value = data.safetyMargin || 100;
