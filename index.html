@@ -1046,7 +1046,18 @@
             try {
                 const result = runOptimization(globalMargin, stockLengths, requiredPieces);
                 if (result.unfulfilled.length > 0) {
-                    renderError("Du mangler træ på lageret til at skære alle emner. Tryk på knappen 'Tilføj bestillingslængder' under Lagerlængder for automatisk at udregne det manglende indkøb.");
+                    renderError(`
+                        <div class="flex flex-col items-center justify-center text-center py-6 px-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <h3 class="font-bold text-red-800 text-lg mb-2">Ikke nok materiale på lager</h3>
+                            <p class="text-red-700 mb-6 max-w-md">Du har ikke nok træ på din lagerliste til at dække alle de ønskede emner. Vil du have appen til automatisk at udregne, hvad du mangler at købe?</p>
+                            <button onclick="window.autoFillStock()" class="btn btn-primary bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-bold shadow-md transition-all transform hover:scale-105">
+                                + Udregn manglende indkøb
+                            </button>
+                        </div>
+                    `);
                     return;
                 }
                 renderResults(result);
@@ -1062,7 +1073,7 @@
             piecesToProcess.forEach(p => {
                 if (!piecesByDim[p.dimension]) piecesByDim[p.dimension] = [];
                 const margin = p.customMargin !== null ? p.customMargin : globalMargin;
-                piecesByDim[p.dimension].push({ id: p.id, exactLength: p.length, cutLength: p.length + margin, margin: margin, tag: p.tag, dimension: p.dimension });
+                piecesByDim[p.dimension].push({ id: p.id, exactLength: p.length, cutLength: p.length + margin, margin: margin, tag: p.tag, dimension: p.dimension, customMargin: p.customMargin });
             });
 
             const stockByDim = {};
@@ -1098,7 +1109,14 @@
                         available.sort((a, b) => a.length - b.length);
                         const idx = available.findIndex(l => l.length >= piece.cutLength);
                         if (idx === -1) {
-                            unfulfilledPieces.push(piece);
+                            unfulfilledPieces.push({
+                                id: piece.id,
+                                dimension: piece.dimension,
+                                tag: piece.tag,
+                                length: piece.exactLength,
+                                amount: 1,
+                                customMargin: piece.customMargin
+                            });
                         } else {
                             const stockItem = available.splice(idx, 1)[0];
                             used.push({ originalLength: stockItem.length, type: stockItem.type, rem: stockItem.length - piece.cutLength, pieces: [piece] });
