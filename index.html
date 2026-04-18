@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="da">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,22 +8,25 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg-primary: #0f172a;
             --bg-secondary: #1e293b;
-            --bg-surface: rgba(255,255,255,0.95);
-            --bg-surface-hover: rgba(255,255,255,1);
-            --accent-primary: #6366f1;    /* indigo-500 */
-            --accent-success: #10b981;    /* emerald-500 */
+            --bg-surface: rgba(255, 255, 255, 0.95);
+            --bg-surface-hover: rgba(255, 255, 255, 1);
+            --accent-primary: #6366f1;
+            /* indigo-500 */
+            --accent-success: #10b981;
+            /* emerald-500 */
             --accent-danger: #ef4444;
             --text-primary: #1e293b;
             --text-secondary: #64748b;
             --text-muted: #94a3b8;
             --border-color: #e2e8f0;
-            --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
-            --shadow-card-hover: 0 4px 16px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
+            --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+            --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.06);
         }
 
         body {
@@ -40,6 +44,7 @@
             border: 1px solid var(--border-color);
             transition: box-shadow 0.2s ease;
         }
+
         .panel:hover {
             box-shadow: var(--shadow-card-hover);
         }
@@ -51,6 +56,7 @@
             gap: 0.75rem;
             margin-bottom: 1.25rem;
         }
+
         .section-badge {
             display: flex;
             align-items: center;
@@ -64,6 +70,7 @@
             font-size: 0.85rem;
             flex-shrink: 0;
         }
+
         .section-title {
             font-size: 1.1rem;
             font-weight: 700;
@@ -81,10 +88,11 @@
             background: white;
             color: var(--text-primary);
         }
+
         .form-input:focus {
             outline: none;
             border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
         }
 
         /* --- BUTTONS --- */
@@ -101,45 +109,58 @@
             cursor: pointer;
             border: none;
         }
+
         .btn-primary {
             background: linear-gradient(135deg, var(--accent-primary), #818cf8);
             color: white;
-            box-shadow: 0 2px 8px rgba(99,102,241,0.3);
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
         }
+
         .btn-primary:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
         }
+
         .btn-success {
             background: linear-gradient(135deg, var(--accent-success), #34d399);
             color: white;
-            box-shadow: 0 2px 8px rgba(16,185,129,0.3);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
         }
+
         .btn-success:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 16px rgba(16,185,129,0.4);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
         }
+
         .btn-danger {
             background: linear-gradient(135deg, #ef4444, #f87171);
             color: white;
         }
+
         .btn-ghost {
             background: transparent;
             color: var(--text-secondary);
             border: 1px solid var(--border-color);
         }
+
         .btn-ghost:hover {
             background: #f8fafc;
             border-color: #cbd5e1;
         }
+
         .btn-dark {
             background: linear-gradient(135deg, #334155, #475569);
             color: white;
         }
+
         .btn-dark:hover {
             background: linear-gradient(135deg, #1e293b, #334155);
         }
-        .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.8rem; }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8rem;
+        }
 
         /* --- STOCK BAR (Skæreplan) --- */
         .stock-bar {
@@ -150,12 +171,14 @@
             overflow: hidden;
             background-color: #f1f5f9;
         }
+
         .piece-wrapper {
             display: flex;
             height: 100%;
             border-right: 2px solid white;
             box-sizing: border-box;
         }
+
         .piece-segment {
             display: flex;
             flex-direction: column;
@@ -166,15 +189,17 @@
             line-height: 1.2;
             overflow: hidden;
         }
+
         .margin-segment {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             background-color: rgba(239, 68, 68, 0.15);
-            border-left: 1px dashed rgba(255,255,255,0.6);
+            border-left: 1px dashed rgba(255, 255, 255, 0.6);
             position: relative;
         }
+
         .margin-input {
             background: transparent;
             border: none;
@@ -189,15 +214,17 @@
             cursor: pointer;
             outline: none;
             color: #b91c1c;
-            text-shadow: 1px 1px 0px rgba(255,255,255,0.9), -1px -1px 0px rgba(255,255,255,0.9), 1px -1px 0px rgba(255,255,255,0.9), -1px 1px 0px rgba(255,255,255,0.9);
+            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.9), -1px -1px 0px rgba(255, 255, 255, 0.9), 1px -1px 0px rgba(255, 255, 255, 0.9), -1px 1px 0px rgba(255, 255, 255, 0.9);
             z-index: 1;
         }
+
         .margin-input:focus {
             border-bottom: 1px solid #b91c1c;
-            background: rgba(255,255,255,0.9);
+            background: rgba(255, 255, 255, 0.9);
             text-shadow: none;
             z-index: 2;
         }
+
         .waste-segment {
             display: flex;
             flex-direction: column;
@@ -212,7 +239,8 @@
         }
 
         /* --- INLINE EDIT (Professionel: ren tekst, subtil hover) --- */
-        .inline-edit, .editable {
+        .inline-edit,
+        .editable {
             background: transparent;
             border: none;
             border-bottom: 1px solid transparent;
@@ -225,15 +253,19 @@
             border-radius: 4px;
             transition: all 0.15s ease;
         }
-        .inline-edit:hover, .editable:hover {
-            background: rgba(99,102,241,0.06);
+
+        .inline-edit:hover,
+        .editable:hover {
+            background: rgba(99, 102, 241, 0.06);
             cursor: pointer;
         }
-        .inline-edit:focus, .editable:focus {
+
+        .inline-edit:focus,
+        .editable:focus {
             background: white;
             border-bottom: 2px solid var(--accent-primary);
             cursor: text;
-            box-shadow: 0 1px 4px rgba(99,102,241,0.15);
+            box-shadow: 0 1px 4px rgba(99, 102, 241, 0.15);
         }
 
         /* Skjul browser-pile for tal-inputs */
@@ -246,7 +278,10 @@
             -webkit-appearance: none;
             margin: 0;
         }
-        .inline-edit[type=number], .editable[type=number], .margin-input[type=number] {
+
+        .inline-edit[type=number],
+        .editable[type=number],
+        .margin-input[type=number] {
             -moz-appearance: textfield;
         }
 
@@ -265,10 +300,12 @@
             overflow: hidden;
             white-space: nowrap;
         }
+
         .list-item:hover {
             background: #f1f5f9;
             border-color: #cbd5e1;
         }
+
         .list-item .remove-btn {
             color: #94a3b8;
             font-size: 0.8rem;
@@ -278,6 +315,7 @@
             background: none;
             border: none;
         }
+
         .list-item .remove-btn:hover {
             color: var(--accent-danger);
         }
@@ -288,11 +326,37 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            body { padding: 0.8cm; margin: 0; background: white !important; }
-            .print-hide { display: none !important; }
-            .print-container { display: block !important; width: 100% !important; max-width: 100% !important; box-shadow: none; border: none; }
-            .panel { box-shadow: none !important; border: none !important; padding: 0 !important; }
-            #results-container { box-shadow: none !important; border: none !important; padding: 0 !important; min-height: 0 !important; }
+
+            body {
+                padding: 0.8cm;
+                margin: 0;
+                background: white !important;
+            }
+
+            .print-hide {
+                display: none !important;
+            }
+
+            .print-container {
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-shadow: none;
+                border: none;
+            }
+
+            .panel {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+            }
+
+            #results-container {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                min-height: 0 !important;
+            }
 
             #print-header {
                 display: block !important;
@@ -311,28 +375,63 @@
                 break-inside: avoid;
             }
 
-            .stock-bar { border: 1px solid #000 !important; background-color: #fff !important; height: 48px !important; }
-            .piece-wrapper { border-right: 1px solid #666 !important; }
-            .piece-segment { color: #000 !important; }
-            .margin-segment { border-left: 1px dashed #666 !important; background-color: #fca5a5 !important; }
-            .margin-input { color: #000 !important; text-shadow: none !important; }
-            .inline-edit, .editable, .margin-input { border: none !important; pointer-events: none; background: transparent !important; box-shadow: none !important; }
+            .stock-bar {
+                border: 1px solid #000 !important;
+                background-color: #fff !important;
+                height: 48px !important;
+            }
+
+            .piece-wrapper {
+                border-right: 1px solid #666 !important;
+            }
+
+            .piece-segment {
+                color: #000 !important;
+            }
+
+            .margin-segment {
+                border-left: 1px dashed #666 !important;
+                background-color: #fca5a5 !important;
+            }
+
+            .margin-input {
+                color: #000 !important;
+                text-shadow: none !important;
+            }
+
+            .inline-edit,
+            .editable,
+            .margin-input {
+                border: none !important;
+                pointer-events: none;
+                background: transparent !important;
+                box-shadow: none !important;
+            }
+
             .waste-segment {
                 background-image: repeating-linear-gradient(45deg, #ccc, #ccc 4px, #fff 4px, #fff 8px) !important;
                 background-color: #fff !important;
                 border-left: 1px solid #666 !important;
                 color: #000 !important;
             }
-            .page-break-before { page-break-before: always; }
-            svg { display: none !important; }
+
+            .page-break-before {
+                page-break-before: always;
+            }
+
+            svg {
+                display: none !important;
+            }
         }
     </style>
 </head>
+
 <body class="p-4 md:p-8">
 
     <div class="max-w-7xl mx-auto print-container">
         <header class="text-center mb-8 print-hide">
-            <div id="version-badge" class="inline-block mb-4 px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-semibold tracking-wider uppercase">v4.2</div>
+            <div id="version-badge"
+                v4.3.0</div>
             <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Træoptimerings-App</h1>
             <p class="text-slate-400 mt-2 text-sm">Deling · Udskrift · Indkøbs- og Bæredygtighedsanalyse</p>
             <p id="version-info" class="text-xs text-slate-500 mt-1"></p>
@@ -344,38 +443,76 @@
                 <div class="panel">
                     <div class="section-header">
                         <div class="section-badge" style="background: linear-gradient(135deg, #334155, #475569);">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                            </svg>
                         </div>
                         <h2 class="section-title">Projektstyring</h2>
                     </div>
                     <div class="space-y-4">
-                         <div>
-                            <label for="print-project-name" class="block text-xs font-medium text-slate-500 mb-1">Projektnavn (til udskrift)</label>
-                            <input type="text" id="print-project-name" class="form-input w-full" placeholder="f.eks. Legehus til haven">
+                        
+                        <!-- Udskrift & Rapport Kort -->
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                            <div class="flex items-center gap-2 mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                                <h3 class="font-bold text-slate-700 text-sm">Udskrift & Rapport</h3>
+                            </div>
+                            <label for="print-project-name" class="block text-xs font-medium text-slate-500 mb-1">Projektnavn (vises på PDF)</label>
+                            <input type="text" id="print-project-name" class="form-input w-full bg-white" placeholder="f.eks. Legehus til haven">
                         </div>
-                        <hr class="border-slate-200">
-                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Lokal Browser-lagring</p>
-                        <div>
-                            <label for="project-name" class="block text-xs font-medium text-slate-500 mb-1">Gem Nuværende Projekt Som</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="project-name" class="form-input flex-grow" placeholder="f.eks. Carport Tag">
-                                <button id="save-project-btn" class="btn btn-primary btn-sm">Gem</button>
+
+                        <!-- Lokal Browser-lagring Kort -->
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                            <div class="flex items-center gap-2 mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" /></svg>
+                                <h3 class="font-bold text-slate-700 text-sm">Lokal Browser-lagring</h3>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="project-name" class="block text-xs font-medium text-slate-500 mb-1">Gem Nuværende Projekt Som</label>
+                                <div class="flex">
+                                    <input type="text" id="project-name" class="form-input w-full rounded-r-none border-r-0 bg-white" placeholder="f.eks. Carport Tag">
+                                    <button id="save-project-btn" class="btn btn-primary btn-sm rounded-l-none flex items-center gap-1.5 px-4 shadow-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                                        Gem
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="saved-projects-select" class="block text-xs font-medium text-slate-500 mb-1">Indlæs Gemt Projekt</label>
+                                <div class="flex gap-2">
+                                    <select id="saved-projects-select" class="form-input flex-grow bg-white"></select>
+                                    <button id="load-project-btn" class="btn btn-success btn-sm flex items-center gap-1.5 shadow-none group transition-all" title="Indlæs">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" /></svg>
+                                        Indlæs
+                                    </button>
+                                    <button id="delete-project-btn" class="btn bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 btn-sm flex items-center justify-center shadow-none transition-all px-3" title="Slet">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <label for="saved-projects-select" class="block text-xs font-medium text-slate-500 mb-1">Indlæs Gemt Projekt</label>
-                            <div class="flex gap-2">
-                                <select id="saved-projects-select" class="form-input flex-grow"></select>
-                                <button id="load-project-btn" class="btn btn-success btn-sm">Indlæs</button>
-                                <button id="delete-project-btn" class="btn btn-danger btn-sm">Slet</button>
+
+                        <!-- Import / Eksport Kort -->
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                            <div class="flex items-center gap-2 mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                <h3 class="font-bold text-slate-700 text-sm">Fysisk Fil (Deling)</h3>
                             </div>
-                        </div>
-                        <hr class="border-slate-200">
-                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Fysisk Fil (Deling)</p>
-                        <div class="flex gap-2">
-                            <button id="save-file-btn" class="btn btn-dark btn-sm flex-1">Gem til Fil</button>
-                            <button id="load-file-btn" class="btn btn-dark btn-sm flex-1">Indlæs fra Fil</button>
-                            <input type="file" id="file-input" class="hidden" accept=".json,application/json">
+                            <div class="flex gap-2">
+                                <button id="save-file-btn" class="btn bg-white border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-100 btn-sm flex-1 flex justify-center items-center gap-1.5 shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                    Eksportér fil
+                                </button>
+                                <button id="load-file-btn" class="btn bg-white border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-100 btn-sm flex-1 flex justify-center items-center gap-1.5 shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                                    Importér fil
+                                </button>
+                                <input type="file" id="file-input" class="hidden" accept=".json,application/json">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -387,8 +524,10 @@
                     </div>
                     <form id="add-dimension-form" class="flex gap-3 items-end">
                         <div class="flex-grow">
-                            <label for="dimension-name" class="block text-xs font-medium text-slate-500 mb-1">Ny dimension</label>
-                            <input type="text" id="dimension-name" name="name" required class="form-input w-full" placeholder="f.eks. 45x195">
+                            <label for="dimension-name" class="block text-xs font-medium text-slate-500 mb-1">Ny
+                                dimension</label>
+                            <input type="text" id="dimension-name" name="name" required class="form-input w-full"
+                                placeholder="f.eks. 45x195">
                         </div>
                         <button type="submit" class="btn btn-ghost btn-sm">Tilføj</button>
                     </form>
@@ -402,23 +541,29 @@
                     </div>
                     <form id="add-piece-form" class="grid grid-cols-1 sm:grid-cols-6 gap-3 items-end">
                         <div class="sm:col-span-2">
-                            <label for="piece-dimension-select" class="block text-xs font-medium text-slate-500 mb-1">Dimension</label>
+                            <label for="piece-dimension-select"
+                                class="block text-xs font-medium text-slate-500 mb-1">Dimension</label>
                             <select id="piece-dimension-select" name="dimension" class="form-input w-full"></select>
                         </div>
-                         <div class="sm:col-span-2">
+                        <div class="sm:col-span-2">
                             <label for="piece-tag" class="block text-xs font-medium text-slate-500 mb-1">Emne</label>
-                            <input type="text" id="piece-tag" name="tag" class="form-input w-full" placeholder="f.eks. Spær">
+                            <input type="text" id="piece-tag" name="tag" class="form-input w-full"
+                                placeholder="f.eks. Spær">
                         </div>
                         <div>
-                            <label for="piece-length" class="block text-xs font-medium text-slate-500 mb-1">Længde (mm)</label>
-                            <input type="number" id="piece-length" name="length" required class="form-input w-full" placeholder="2400">
+                            <label for="piece-length" class="block text-xs font-medium text-slate-500 mb-1">Længde
+                                (mm)</label>
+                            <input type="number" id="piece-length" name="length" required class="form-input w-full"
+                                placeholder="2400">
                         </div>
                         <div>
-                            <label for="piece-amount" class="block text-xs font-medium text-slate-500 mb-1">Antal</label>
-                            <input type="number" id="piece-amount" name="amount" value="1" min="1" required class="form-input w-full">
+                            <label for="piece-amount"
+                                class="block text-xs font-medium text-slate-500 mb-1">Antal</label>
+                            <input type="number" id="piece-amount" name="amount" value="1" min="1" required
+                                class="form-input w-full">
                         </div>
                         <div class="sm:col-span-6">
-                             <button type="submit" class="btn btn-primary w-full">Tilføj Emne</button>
+                            <button type="submit" class="btn btn-primary w-full">Tilføj Emne</button>
                         </div>
                     </form>
                     <div id="pieces-list" class="mt-4 space-y-1.5"></div>
@@ -431,16 +576,20 @@
                     </div>
                     <form id="add-stock-form" class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
                         <div class="sm:col-span-2">
-                            <label for="stock-dimension-select" class="block text-xs font-medium text-slate-500 mb-1">Dimension</label>
-                             <select id="stock-dimension-select" name="dimension" class="form-input w-full"></select>
+                            <label for="stock-dimension-select"
+                                class="block text-xs font-medium text-slate-500 mb-1">Dimension</label>
+                            <select id="stock-dimension-select" name="dimension" class="form-input w-full"></select>
                         </div>
                         <div>
-                            <label for="stock-length-select" class="block text-xs font-medium text-slate-500 mb-1">Standardlængde</label>
+                            <label for="stock-length-select"
+                                class="block text-xs font-medium text-slate-500 mb-1">Standardlængde</label>
                             <select id="stock-length-select" name="length" required class="form-input w-full"></select>
                         </div>
                         <div>
-                            <label for="stock-amount" class="block text-xs font-medium text-slate-500 mb-1">Antal</label>
-                            <input type="number" id="stock-amount" name="amount" value="1" min="1" required class="form-input w-full">
+                            <label for="stock-amount"
+                                class="block text-xs font-medium text-slate-500 mb-1">Antal</label>
+                            <input type="number" id="stock-amount" name="amount" value="1" min="1" required
+                                class="form-input w-full">
                         </div>
                         <div class="sm:col-span-4">
                             <button type="submit" class="btn btn-primary w-full">Tilføj Lagerlængde</button>
@@ -455,50 +604,78 @@
                         <h2 class="section-title">Indstillinger</h2>
                     </div>
                     <div>
-                        <label for="safety-margin" class="block text-xs font-medium text-slate-500 mb-1">Standard Ekstra (mm)</label>
-                        <p class="text-xs text-slate-400 mb-2">Lægges til hvert emne for at sikre plads til snit. Kan overskrives pr. emne i skæreplanen.</p>
+                        <label for="safety-margin" class="block text-xs font-medium text-slate-500 mb-1">Standard Ekstra
+                            (mm)</label>
+                        <p class="text-xs text-slate-400 mb-2">Lægges til hvert emne for at sikre plads til snit. Kan
+                            overskrives pr. emne i skæreplanen.</p>
                         <input type="number" id="safety-margin" value="100" class="form-input w-full">
                     </div>
                 </div>
             </div>
 
             <div class="flex flex-col gap-5">
-                <div class="sticky top-4 z-50 print-hide flex flex-col gap-3 bg-slate-900/95 backdrop-blur-sm rounded-xl p-3 shadow-lg border border-slate-700/50">
-                     <button id="calculate-btn-desktop" class="btn btn-success w-full py-4 text-lg font-bold shadow-lg hover:shadow-xl transition-all">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                         Beregn Optimering
-                     </button>
-                     <div class="flex gap-2">
-                        <button id="undo-btn" class="btn w-full py-2 bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                <div
+                    class="sticky top-4 z-50 print-hide flex flex-col gap-3 bg-slate-900/95 backdrop-blur-sm rounded-xl p-3 shadow-lg border border-slate-700/50">
+                    <button id="calculate-btn-desktop"
+                        class="btn btn-success w-full py-4 text-lg font-bold shadow-lg hover:shadow-xl transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                        Beregn Optimering
+                    </button>
+                    <div class="flex gap-2">
+                        <button id="undo-btn"
+                            class="btn w-full py-2 bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                            </svg>
                             Fortryd
                         </button>
-                        <button id="redo-btn" class="btn w-full py-2 bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 10H11a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"/></svg>
+                        <button id="redo-btn"
+                            class="btn w-full py-2 bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M21 10H11a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6" />
+                            </svg>
                             Gendan
                         </button>
-                     </div>
-                     <button id="print-btn-desktop" class="hidden btn w-full py-3 bg-slate-700/80 text-slate-200 border border-slate-600 hover:bg-slate-600 hover:text-white">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                         Print Skæreplan
+                    </div>
+                    <button id="print-btn-desktop"
+                        class="hidden btn w-full py-3 bg-slate-700/80 text-slate-200 border border-slate-600 hover:bg-slate-600 hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                        Print Skæreplan
                     </button>
                 </div>
                 <div id="results-container" class="panel min-h-[300px]">
-                     <div id="print-header" class="hidden"></div>
-                     <div id="results-placeholder" class="flex flex-col items-center justify-center h-full text-center py-16">
-                         <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                         </div>
-                         <p class="font-semibold text-slate-500">Resultaterne vil blive vist her</p>
-                         <p class="text-sm text-slate-400 mt-1">Indtast data og tryk på 'Beregn Optimering'</p>
-                     </div>
+                    <div id="print-header" class="hidden"></div>
+                    <div id="results-placeholder"
+                        class="flex flex-col items-center justify-center h-full text-center py-16">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-slate-300" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <p class="font-semibold text-slate-500">Resultaterne vil blive vist her</p>
+                        <p class="text-sm text-slate-400 mt-1">Indtast data og tryk på 'Beregn Optimering'</p>
+                    </div>
                 </div>
                 <div id="sustainability-report" class="panel hidden print-hide">
-                    </div>
+                </div>
             </div>
         </div>
     </div>
-<script>
+    <script>
         // --- STATE MANAGEMENT ---
         let availableDimensions = ['45x95', '45x120', '45x145'];
         let requiredPieces = [];
@@ -522,18 +699,18 @@
                 printProjectName: printProjectNameInput ? printProjectNameInput.value : "",
                 projectName: projectNameInput ? projectNameInput.value : ""
             };
-            
+
             if (historyIndex < history.length - 1) {
                 history = history.slice(0, historyIndex + 1);
             }
-            
+
             if (history.length > 0) {
                 const lastState = history[history.length - 1];
                 if (JSON.stringify(lastState) === JSON.stringify(state)) {
                     return;
                 }
             }
-            
+
             history.push(state);
             if (history.length > 50) {
                 history.shift();
@@ -553,7 +730,7 @@
             if (safetyMarginInput) safetyMarginInput.value = state.safetyMargin;
             if (printProjectNameInput) printProjectNameInput.value = state.printProjectName;
             if (projectNameInput) projectNameInput.value = state.projectName;
-            
+
             renderAllLists();
             resultsContainer.innerHTML = '<div id="print-header" class="hidden"></div>';
             sustainabilityReportContainer.classList.add('hidden');
@@ -579,8 +756,8 @@
         function updateUndoRedoButtons() {
             const undoBtn = document.getElementById('undo-btn');
             const redoBtn = document.getElementById('redo-btn');
-            if(undoBtn) undoBtn.disabled = historyIndex <= 0;
-            if(redoBtn) redoBtn.disabled = historyIndex >= history.length - 1;
+            if (undoBtn) undoBtn.disabled = historyIndex <= 0;
+            if (redoBtn) redoBtn.disabled = historyIndex >= history.length - 1;
         }
 
         // Genanvendeligt blyant-ikon SVG
@@ -596,18 +773,18 @@
         const saveFileBtn = document.getElementById('save-file-btn');
         const loadFileBtn = document.getElementById('load-file-btn');
         const fileInput = document.getElementById('file-input');
-        
+
         const addDimensionForm = document.getElementById('add-dimension-form');
         const dimensionsListContainer = document.getElementById('dimensions-list');
         const pieceDimensionSelect = document.getElementById('piece-dimension-select');
         const stockDimensionSelect = document.getElementById('stock-dimension-select');
         const stockLengthSelect = document.getElementById('stock-length-select');
-        
+
         const addPieceForm = document.getElementById('add-piece-form');
         const piecesListContainer = document.getElementById('pieces-list');
         const addStockForm = document.getElementById('add-stock-form');
         const stockListContainer = document.getElementById('stock-list');
-        
+
         const calculateBtnDesktop = document.getElementById('calculate-btn-desktop');
         const printBtnDesktop = document.getElementById('print-btn-desktop');
         const resultsContainer = document.getElementById('results-container');
@@ -621,7 +798,7 @@
         saveFileBtn.addEventListener('click', handleSaveToFile);
         loadFileBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', handleLoadFromFile);
-        
+
         addDimensionForm.addEventListener('submit', handleAddDimension);
         addPieceForm.addEventListener('submit', handleAddPiece);
         addStockForm.addEventListener('submit', handleAddStock);
@@ -636,18 +813,8 @@
         // Opdater versionsdato i toppen automatisk
         const modDate = new Date(document.lastModified);
         document.getElementById('version-info').innerText = "Sidst opdateret: " + document.lastModified;
-        
-        // Auto-generer version ud fra filens dato
-        const majorVersion = "4";
-        const mm = (modDate.getMonth() + 1).toString().padStart(2, '0');
-        const dd = modDate.getDate().toString().padStart(2, '0');
-        const hh = modDate.getHours().toString().padStart(2, '0');
-        const min = modDate.getMinutes().toString().padStart(2, '0');
-        
-        const badgeElement = document.getElementById('version-badge');
-        if (badgeElement) {
-            badgeElement.innerText = `v${majorVersion}.${mm}${dd}.${hh}${min}`;
-        }
+
+
 
         // --- COLOR PALETTE (tag-baseret: samme emne-navn = samme farve) ---
         const tagColorPalette = ['#a5b4fc', '#f9a8d4', '#86efac', '#fcd34d', '#7dd3fc', '#c4b5fd', '#fca5a5', '#6ee7b7', '#fdba74', '#67e8f9'];
@@ -663,19 +830,19 @@
         }
 
         // --- GLOBAL FUNKTIONER TIL REDIGERING ---
-        window.updatePieceTag = function(id, newTag) {
+        window.updatePieceTag = function (id, newTag) {
             const p = requiredPieces.find(p => p.id === id);
-            if(p) { p.tag = newTag; handleCalculate(); saveState(); }
+            if (p) { p.tag = newTag; handleCalculate(); saveState(); }
         };
 
-        window.updatePieceMargin = function(id, newMargin) {
+        window.updatePieceMargin = function (id, newMargin) {
             const margin = parseInt(newMargin);
-            if(isNaN(margin) || margin < 0) return;
+            if (isNaN(margin) || margin < 0) return;
             const p = requiredPieces.find(p => p.id === id);
-            if(p) { p.customMargin = margin; handleCalculate(); saveState(); }
+            if (p) { p.customMargin = margin; handleCalculate(); saveState(); }
         };
 
-        window.updateGroupAmount = function(ids, newAmount) {
+        window.updateGroupAmount = function (ids, newAmount) {
             const target = parseInt(newAmount);
             if (isNaN(target) || target < 1) { renderPiecesList(); return; }
             const current = ids.length;
@@ -695,7 +862,7 @@
             saveState();
         };
 
-        window.updateGroupLength = function(ids, newLen) {
+        window.updateGroupLength = function (ids, newLen) {
             const val = parseInt(newLen);
             if (isNaN(val) || val < 1) { renderPiecesList(); return; }
             requiredPieces.forEach(p => { if (ids.includes(p.id)) p.length = val; });
@@ -703,7 +870,7 @@
             saveState();
         };
 
-        window.updateGroupTag = function(ids, newTag) {
+        window.updateGroupTag = function (ids, newTag) {
             requiredPieces.forEach(p => { if (ids.includes(p.id)) p.tag = newTag.trim(); });
             renderPiecesList();
             saveState();
@@ -736,16 +903,16 @@
             const fd = new FormData(e.target);
             const lastDim = fd.get('dimension');
             const lastTag = fd.get('tag').trim();
-            const piece = { 
-                id: nextPieceId++, 
-                dimension: lastDim, 
-                tag: lastTag || 'Emne', 
-                length: parseInt(fd.get('length')), 
-                amount: parseInt(fd.get('amount')), 
-                customMargin: null 
+            const piece = {
+                id: nextPieceId++,
+                dimension: lastDim,
+                tag: lastTag || 'Emne',
+                length: parseInt(fd.get('length')),
+                amount: parseInt(fd.get('amount')),
+                customMargin: null
             };
             if (!piece.dimension || isNaN(piece.length)) return;
-            for(let i=0; i<piece.amount; i++) {
+            for (let i = 0; i < piece.amount; i++) {
                 requiredPieces.push({ ...piece, id: nextPieceId++, amount: 1 });
             }
             renderPiecesList();
@@ -828,22 +995,22 @@
                     if (b.exactLength !== a.exactLength) {
                         return b.exactLength - a.exactLength;
                     }
-                    return a.id - b.id; 
+                    return a.id - b.id;
                 });
-                
+
                 const available = stockByDim[dim] ? [...stockByDim[dim]] : [];
                 if (currentStock.length > 0 && available.length === 0) throw new Error(`Mangler lager til ${dim}`);
-                
+
                 const used = [];
                 for (const piece of pieces) {
                     reqLen += piece.cutLength;
                     let placed = false;
-                    used.sort((a,b) => a.rem - b.rem);
+                    used.sort((a, b) => a.rem - b.rem);
                     for (const s of used) {
                         if (s.rem >= piece.cutLength) { s.rem -= piece.cutLength; s.pieces.push(piece); placed = true; break; }
                     }
                     if (!placed) {
-                        available.sort((a,b) => a - b);
+                        available.sort((a, b) => a - b);
                         const idx = available.findIndex(l => l >= piece.cutLength);
                         if (idx === -1) throw new Error(`Ikke nok træ (${dim}) til ${piece.exactLength}mm + margin`);
                         const len = available.splice(idx, 1)[0];
@@ -857,9 +1024,9 @@
 
         // --- UI RENDERING ---
         function renderAllLists() { renderDimensionsList(); updateDimensionDropdowns(); renderPiecesList(); renderStockList(); }
-        function updateDimensionDropdowns() { 
+        function updateDimensionDropdowns() {
             const html = availableDimensions.map(d => `<option value="${d}">${d}</option>`).join('');
-            pieceDimensionSelect.innerHTML = html; stockDimensionSelect.innerHTML = html; 
+            pieceDimensionSelect.innerHTML = html; stockDimensionSelect.innerHTML = html;
         }
         function renderDimensionsList() {
             dimensionsListContainer.innerHTML = availableDimensions.map(d => `
@@ -875,7 +1042,7 @@
             const grouped = {};
             requiredPieces.forEach(p => {
                 const key = `${p.dimension}-${p.length}-${p.tag}-${p.customMargin}`;
-                if(!grouped[key]) grouped[key] = { ...p, amount: 0, ids: [] };
+                if (!grouped[key]) grouped[key] = { ...p, amount: 0, ids: [] };
                 grouped[key].amount++; grouped[key].ids.push(p.id);
             });
             piecesListContainer.innerHTML = Object.values(grouped).map(p => {
@@ -913,14 +1080,14 @@
             const summary = `<div class="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200 text-sm">
                 <h3 class="text-base font-bold text-slate-800 mb-3">Samlet Oversigt</h3>
                 <div class="grid grid-cols-2 gap-2">
-                    <span class="text-slate-500">Anvendt træ:</span><span class="font-bold text-slate-800 text-right">${(res.totalUsedStockLength/1000).toFixed(2)} m</span>
-                    <span class="text-slate-500">Spild:</span><span class="font-bold ${wasteColor} text-right">${(res.totalWaste/1000).toFixed(2)} m (${res.wastePercentage.toFixed(1)}%)</span>
+                    <span class="text-slate-500">Anvendt træ:</span><span class="font-bold text-slate-800 text-right">${(res.totalUsedStockLength / 1000).toFixed(2)} m</span>
+                    <span class="text-slate-500">Spild:</span><span class="font-bold ${wasteColor} text-right">${(res.totalWaste / 1000).toFixed(2)} m (${res.wastePercentage.toFixed(1)}%)</span>
                 </div>
             </div>`;
             resultsContainer.innerHTML += summary;
 
             let planHTML = '<div class="space-y-8"><h3 class="text-lg font-semibold">Visuel Skæreplan</h3>';
-            
+
             const sortedDimensions = Object.keys(res.plan).sort();
 
             for (const dim of sortedDimensions) {
@@ -943,7 +1110,7 @@
                 if (uniqueLengths.length === 1) {
                     lengthLabel = `á ${uniqueLengths[0]} mm`;
                 } else {
-                    lengthLabel = uniqueLengths.sort((a,b) => a-b).map(l => `${lengthCounts[l]} stk á ${l} mm`).join(', ');
+                    lengthLabel = uniqueLengths.sort((a, b) => a - b).map(l => `${lengthCounts[l]} stk á ${l} mm`).join(', ');
                 }
 
                 // Beregn samlet spild for denne dimension
@@ -982,7 +1149,7 @@
                         <th class="px-3 py-1.5 text-right font-semibold">Antal</th>
                         <th class="px-3 py-1.5 text-right font-semibold">Netto længde</th>
                     </tr></thead><tbody>`;
-                Object.values(pieceSummary).sort((a,b) => b.length - a.length).forEach(item => {
+                Object.values(pieceSummary).sort((a, b) => b.length - a.length).forEach(item => {
                     const tColor = getTagColor(item.tag);
                     planHTML += `<tr class="border-t border-slate-100">
                         <td class="px-3 py-1 font-semibold" style="color:${tColor}"><span class="inline-block w-2 h-2 rounded-full mr-1.5" style="background:${tColor}"></span>${item.tag}</td>
@@ -997,7 +1164,7 @@
                     const piecesOnStock = stock.pieces.length;
                     planHTML += `<div class="mt-3 stock-block">
                         <div class="flex items-baseline gap-2 mb-1">
-                            <span class="text-xs font-bold text-slate-700">Lagerlængde ${i+1} af ${stockCount}</span>
+                            <span class="text-xs font-bold text-slate-700">Lagerlængde ${i + 1} af ${stockCount}</span>
                             <span class="text-xs text-slate-300">—</span>
                             <span class="text-xs text-slate-500">${stock.originalLength} mm</span>
                             <span class="text-xs text-slate-300">—</span>
@@ -1010,7 +1177,7 @@
                         const w = (p.cutLength / stock.originalLength) * 100;
                         const netW = (p.exactLength / p.cutLength) * 100;
                         const margW = (p.margin / p.cutLength) * 100;
-                        
+
                         // Farven bindes til tag-navnet, så samme emne altid har samme farve
                         const tagCol = getTagColor(p.tag);
                         planHTML += `<div class="piece-wrapper" style="width:${w}%; background:${tagCol}">
@@ -1018,7 +1185,7 @@
                             ${p.margin > 0 ? `<div class="margin-segment" style="width:${margW}%"><input type="number" class="margin-input" value="${p.margin}" onchange="updatePieceMargin(${p.id}, this.value)"></div>` : ''}
                         </div>`;
                     });
-                    if (stock.waste > 0) planHTML += `<div class="waste-segment" style="width:${(stock.waste/stock.originalLength)*100}%">Spild ${stock.waste}mm</div>`;
+                    if (stock.waste > 0) planHTML += `<div class="waste-segment" style="width:${(stock.waste / stock.originalLength) * 100}%">Spild ${stock.waste}mm</div>`;
                     planHTML += `</div></div>`;
                 });
 
@@ -1031,7 +1198,7 @@
         function renderError(m) { resultsContainer.innerHTML = `<div class="p-4 bg-red-50 text-red-700 rounded-xl border border-red-200 font-semibold text-sm">${m}</div>`; }
         function showPrintButtons(s) { printBtnDesktop.classList.toggle('hidden', !s); }
         function handlePrint() { window.print(); }
-        function handleSaveProject() { 
+        function handleSaveProject() {
             const name = projectNameInput.value.trim();
             if (!name) { alert('Indtast venligst et navn til dit projekt.'); return; }
             const projects = getSavedProjects();
@@ -1039,7 +1206,7 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
             populateProjectsDropdown(); alert(`Projektet '${name}' er gemt lokalt.`);
         }
-        function handleLoadProject() { 
+        function handleLoadProject() {
             const name = savedProjectsSelect.value;
             if (!name) return;
             const projects = getSavedProjects();
@@ -1059,7 +1226,7 @@
                 saveState();
             }
         }
-        function handleDeleteProject() { 
+        function handleDeleteProject() {
             const name = savedProjectsSelect.value;
             if (!name) return;
             if (confirm(`Slet projektet '${name}'?`)) {
@@ -1069,7 +1236,7 @@
                 populateProjectsDropdown(); alert(`Slettet.`);
             }
         }
-        function handleSaveToFile() { 
+        function handleSaveToFile() {
             const projectName = printProjectNameInput.value.trim() || 'trae-projekt';
             const filename = `${projectName.replace(/[^a-z0-9æøå]/gi, '_').toLowerCase()}.json`;
             const projectData = { availableDimensions, requiredPieces, stockLengths, safetyMargin: safetyMarginInput.value, printProjectName: printProjectNameInput.value, nextPieceId, nextStockId, version: '4.1' };
@@ -1081,11 +1248,11 @@
             document.body.appendChild(link); link.click();
             document.body.removeChild(link); URL.revokeObjectURL(url);
         }
-        function handleLoadFromFile(e) { 
+        function handleLoadFromFile(e) {
             const file = e.target.files[0];
             if (!file) { return; }
             const reader = new FileReader();
-            reader.onload = function(evt) {
+            reader.onload = function (evt) {
                 try {
                     const data = JSON.parse(evt.target.result);
                     if (!data.availableDimensions || !data.requiredPieces) throw new Error('Ugyldigt filformat.');
@@ -1103,7 +1270,8 @@
                     showPrintButtons(false);
                     alert(`Filen er indlæst.`);
                     saveState();
-                } catch (error) { alert(`Fejl: ${error.message}`);
+                } catch (error) {
+                    alert(`Fejl: ${error.message}`);
                 } finally { e.target.value = null; }
             };
             reader.readAsText(file);
@@ -1273,4 +1441,5 @@
         saveState();
     </script>
 </body>
+
 </html>
