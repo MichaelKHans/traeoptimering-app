@@ -261,7 +261,9 @@
             border: 1px solid #e2e8f0;
             transition: all 0.15s ease;
             list-style: none;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            overflow: hidden;
+            white-space: nowrap;
         }
         .list-item:hover {
             background: #f1f5f9;
@@ -466,7 +468,7 @@
                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                          Beregn Optimering
                      </button>
-                     <button id="print-btn-desktop" class="hidden btn btn-ghost w-full py-3">
+                     <button id="print-btn-desktop" class="hidden btn w-full py-3 bg-slate-700/80 text-slate-200 border border-slate-600 hover:bg-slate-600 hover:text-white">
                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
                          Print Skæreplan
                     </button>
@@ -543,8 +545,18 @@
         // Opdater versionsdato i toppen automatisk
         document.getElementById('version-info').innerText = "Sidst opdateret: " + document.lastModified;
 
-        // --- COLOR PALETTE ---
-        const pieceColors = ['#a5b4fc', '#f9a8d4', '#86efac', '#fcd34d', '#7dd3fc', '#c4b5fd', '#fca5a5', '#6ee7b7', '#fdba74', '#67e8f9'];
+        // --- COLOR PALETTE (tag-baseret: samme emne-navn = samme farve) ---
+        const tagColorPalette = ['#a5b4fc', '#f9a8d4', '#86efac', '#fcd34d', '#7dd3fc', '#c4b5fd', '#fca5a5', '#6ee7b7', '#fdba74', '#67e8f9'];
+        const tagColorMap = {};
+        let nextTagColorIdx = 0;
+        function getTagColor(tag) {
+            const key = (tag || 'Emne').toLowerCase();
+            if (!tagColorMap[key]) {
+                tagColorMap[key] = tagColorPalette[nextTagColorIdx % tagColorPalette.length];
+                nextTagColorIdx++;
+            }
+            return tagColorMap[key];
+        }
 
         // --- GLOBAL FUNKTIONER TIL REDIGERING ---
         window.updatePieceTag = function(id, newTag) {
@@ -651,6 +663,13 @@
         }
 
         function removePiece(id) { requiredPieces = requiredPieces.filter(p => p.id !== id); renderPiecesList(); }
+        function confirmRemoveGroup(ids) {
+            if (ids.length >= 3) {
+                if (!confirm(`Fjern ${ids.length} emner?`)) return;
+            }
+            ids.forEach(id => { requiredPieces = requiredPieces.filter(p => p.id !== id); });
+            renderPiecesList();
+        }
         function removeStock(id) { stockLengths = stockLengths.filter(s => s.id !== id); renderStockList(); }
 
         function handleCalculate() {
@@ -734,26 +753,34 @@
                 if(!grouped[key]) grouped[key] = { ...p, amount: 0, ids: [] };
                 grouped[key].amount++; grouped[key].ids.push(p.id);
             });
-            piecesListContainer.innerHTML = Object.values(grouped).map(p => `
-                <div class="list-item">
-                    <div class="font-mono text-sm flex items-center gap-1.5 flex-grow min-w-0 flex-nowrap">
-                        <input type="number" class="inline-edit w-8 font-bold flex-shrink-0" value="${p.amount}" onchange='updateGroupAmount(${JSON.stringify(p.ids)}, this.value)'>
-                        <span class="text-slate-300 flex-shrink-0">×</span>
-                        <span class="font-semibold text-slate-700 flex-shrink-0">${p.dimension}</span>
-                        <span class="text-slate-200 flex-shrink-0">|</span>
-                        <input type="number" class="inline-edit w-14 font-bold flex-shrink-0" value="${p.length}" onchange='updateGroupLength(${JSON.stringify(p.ids)}, this.value)'><span class="text-slate-400 text-xs flex-shrink-0">mm</span>
-                        <span class="text-slate-200 flex-shrink-0">|</span>
-                        <input type="text" class="inline-edit text-indigo-600 font-semibold text-left truncate min-w-0" value="${p.tag}" onchange='updateGroupTag(${JSON.stringify(p.ids)}, this.value)' style="flex: 1 1 60px; max-width: 120px;">
-                    </div>
-                    <button onclick='${JSON.stringify(p.ids)}.forEach(id => removePiece(id))' class="remove-btn flex-shrink-0 ml-2">Fjern</button>
+            piecesListContainer.innerHTML = Object.values(grouped).map(p => {
+                const color = getTagColor(p.tag);
+                return `
+                <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;border-left:3px solid ${color};flex-wrap:nowrap;overflow:hidden">
+                    <input type="number" class="inline-edit" style="width:32px;flex-shrink:0" value="${p.amount}" onchange='updateGroupAmount(${JSON.stringify(p.ids)}, this.value)'>
+                    <span style="color:#cbd5e1;flex-shrink:0">×</span>
+                    <span style="font-weight:600;color:#475569;flex-shrink:0;font-size:0.875rem">${p.dimension}</span>
+                    <span style="color:#e2e8f0;flex-shrink:0">|</span>
+                    <input type="number" class="inline-edit" style="width:50px;flex-shrink:0" value="${p.length}" onchange='updateGroupLength(${JSON.stringify(p.ids)}, this.value)'>
+                    <span style="color:#94a3b8;font-size:0.75rem;flex-shrink:0">mm</span>
+                    <span style="color:#e2e8f0;flex-shrink:0">|</span>
+                    <input type="text" class="inline-edit" style="color:#6366f1;font-weight:600;width:70px;min-width:30px;flex:0 1 auto;text-overflow:ellipsis;overflow:hidden" value="${p.tag}" onchange='updateGroupTag(${JSON.stringify(p.ids)}, this.value)'>
+                    <button onclick='confirmRemoveGroup(${JSON.stringify(p.ids)})' style="margin-left:auto;flex-shrink:0;color:#94a3b8;font-size:0.8rem;font-weight:600;background:none;border:none;cursor:pointer;white-space:nowrap">Fjern</button>
                 </div>
-            `).join('') || '<p class="text-sm text-slate-400">Ingen emner.</p>';
+            `}).join('') || '<p class="text-sm text-slate-400">Ingen emner.</p>';
         }
         function renderStockList() {
-            stockListContainer.innerHTML = stockLengths.map(s => `<div class="list-item"><span class="font-mono text-sm font-medium">${s.amount} stk. <span class="text-slate-300">·</span> ${s.dimension} <span class="text-slate-300">·</span> ${s.length} mm</span><button onclick="removeStock(${s.id})" class="remove-btn">Fjern</button></div>`).join('') || '<p class="text-sm text-slate-400">Ingen lagerlængder.</p>';
+            stockListContainer.innerHTML = stockLengths.map(s => `<div class="list-item"><span class="font-mono text-sm font-medium">${s.amount} stk. <span class="text-slate-300">·</span> ${s.dimension} <span class="text-slate-300">·</span> ${s.length} mm</span><button onclick="removeStock(${s.id})" class="remove-btn flex-shrink-0">Fjern</button></div>`).join('') || '<p class="text-sm text-slate-400">Ingen lagerlængder.</p>';
         }
         function renderResults(res) {
-            const summary = `<div class="mb-8 p-4 bg-gray-50 rounded-lg border text-sm"><h3 class="text-lg font-semibold mb-3">Samlet Oversigt</h3><div class="grid grid-cols-2 gap-2"><span>Anvendt træ:</span><span class="font-bold text-right">${(res.totalUsedStockLength/1000).toFixed(2)} m</span><span>Spild:</span><span class="font-bold text-red-600 text-right">${(res.totalWaste/1000).toFixed(2)} m (${res.wastePercentage.toFixed(1)}%)</span></div></div>`;
+            const wasteColor = res.wastePercentage > 25 ? 'text-red-600' : res.wastePercentage > 15 ? 'text-amber-600' : 'text-emerald-600';
+            const summary = `<div class="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200 text-sm">
+                <h3 class="text-base font-bold text-slate-800 mb-3">Samlet Oversigt</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <span class="text-slate-500">Anvendt træ:</span><span class="font-bold text-slate-800 text-right">${(res.totalUsedStockLength/1000).toFixed(2)} m</span>
+                    <span class="text-slate-500">Spild:</span><span class="font-bold ${wasteColor} text-right">${(res.totalWaste/1000).toFixed(2)} m (${res.wastePercentage.toFixed(1)}%)</span>
+                </div>
+            </div>`;
             resultsContainer.innerHTML += summary;
 
             let planHTML = '<div class="space-y-8"><h3 class="text-lg font-semibold">Visuel Skæreplan</h3>';
@@ -813,17 +840,18 @@
                     });
                 });
 
-                planHTML += `<table class="w-full text-xs mb-4 border border-gray-200 rounded">
-                    <thead><tr class="bg-gray-50 text-gray-500 uppercase">
-                        <th class="px-3 py-1.5 text-left font-medium">Emne</th>
-                        <th class="px-3 py-1.5 text-right font-medium">Antal</th>
-                        <th class="px-3 py-1.5 text-right font-medium">Netto længde</th>
+                planHTML += `<table class="w-full text-xs mb-4 border border-slate-200 rounded-lg overflow-hidden">
+                    <thead><tr class="bg-slate-50 text-slate-400 uppercase text-[10px] tracking-wider">
+                        <th class="px-3 py-1.5 text-left font-semibold">Emne</th>
+                        <th class="px-3 py-1.5 text-right font-semibold">Antal</th>
+                        <th class="px-3 py-1.5 text-right font-semibold">Netto længde</th>
                     </tr></thead><tbody>`;
                 Object.values(pieceSummary).sort((a,b) => b.length - a.length).forEach(item => {
-                    planHTML += `<tr class="border-t border-gray-100">
-                        <td class="px-3 py-1 font-semibold text-indigo-700">${item.tag}</td>
-                        <td class="px-3 py-1 text-right">${item.count} stk.</td>
-                        <td class="px-3 py-1 text-right">${item.length} mm</td>
+                    const tColor = getTagColor(item.tag);
+                    planHTML += `<tr class="border-t border-slate-100">
+                        <td class="px-3 py-1 font-semibold" style="color:${tColor}"><span class="inline-block w-2 h-2 rounded-full mr-1.5" style="background:${tColor}"></span>${item.tag}</td>
+                        <td class="px-3 py-1 text-right text-slate-600">${item.count} stk.</td>
+                        <td class="px-3 py-1 text-right text-slate-600">${item.length} mm</td>
                     </tr>`;
                 });
                 planHTML += `</tbody></table>`;
@@ -847,8 +875,9 @@
                         const netW = (p.exactLength / p.cutLength) * 100;
                         const margW = (p.margin / p.cutLength) * 100;
                         
-                        // Farven bindes til ID'et, så den ikke skifter, når rækkefølgen låses
-                        planHTML += `<div class="piece-wrapper" style="width:${w}%; background:${pieceColors[p.id % pieceColors.length]}">
+                        // Farven bindes til tag-navnet, så samme emne altid har samme farve
+                        const tagCol = getTagColor(p.tag);
+                        planHTML += `<div class="piece-wrapper" style="width:${w}%; background:${tagCol}">
                             <div class="piece-segment" style="width:${netW}%"><input class="editable font-bold text-center w-full" value="${p.tag}" onchange="updatePieceTag(${p.id}, this.value)"><span>${p.exactLength} mm</span></div>
                             ${p.margin > 0 ? `<div class="margin-segment" style="width:${margW}%"><input type="number" class="margin-input" value="${p.margin}" onchange="updatePieceMargin(${p.id}, this.value)"></div>` : ''}
                         </div>`;
@@ -1045,23 +1074,38 @@
                 }
             }
 
+            // Håndtér negativ besparelse
+            let savingsHTML;
+            if (savedWasteLength > 0) {
+                savingsHTML = `<p class="text-sm text-slate-600">Ved at optimere har du sparet ca. <span class="font-bold text-emerald-600">${(savedWasteLength / 1000).toFixed(2)} meter</span> træ i forhold til en uoptimeret metode.</p>`;
+            } else if (savedWasteLength === 0) {
+                savingsHTML = `<p class="text-sm text-slate-600">Optimeringen matcher den uoptimerede metode — ingen yderligere besparelse.</p>`;
+            } else {
+                savingsHTML = `<p class="text-sm text-slate-600">Optimeringen bruger <span class="font-bold text-amber-600">${(Math.abs(savedWasteLength) / 1000).toFixed(2)} meter</span> mere end den naive metode. Dette kan ske når lagerlængderne er større end nødvendigt.</p>`;
+            }
+
             const html = `
-                <div class="flex items-center gap-4 border-b pb-3 mb-3">
-                    <h3 class="text-lg font-semibold text-gray-800">Bæredygtigheds- & Indkøbsanalyse</h3>
+                <div class="section-header">
+                    <div class="section-badge" style="background: linear-gradient(135deg, #059669, #34d399);">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    </div>
+                    <h3 class="section-title">Bæredygtigheds- & Indkøbsanalyse</h3>
                 </div>
-                <div class="space-y-4 mt-4 bg-green-50 p-4 rounded-lg">
-                    <div>
-                        <h4 class="font-semibold text-gray-700">Optimalt Indkøb</h4>
-                        <p class="text-sm text-gray-600 mb-2">For at opnå mindst muligt spild på dette projekt, anbefales følgende indkøb:</p>
-                        <ul class="list-disc list-inside space-y-1">${purchaseHTML || '<li class="text-sm">Ingen indkøb nødvendigt.</li>'}</ul>
+                <div class="space-y-4 mt-4">
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-700 text-sm mb-2">📦 Optimalt Indkøb</h4>
+                        <p class="text-xs text-slate-500 mb-2">For at opnå mindst muligt spild, anbefales følgende indkøb:</p>
+                        <ul class="list-disc list-inside space-y-1 text-sm">${purchaseHTML || '<li class="text-slate-400">Ingen indkøb nødvendigt.</li>'}</ul>
                     </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-700">Spild-Besparelse</h4>
-                        <p class="text-sm text-gray-600">Ved at optimere har du sparet ca. <span class="font-bold text-green-600">${(savedWasteLength / 1000).toFixed(2)} meter</span> træ i forhold til en uoptimeret metode.</p>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-700">CO2-Besparelse</h4>
-                        <p class="text-sm text-gray-600">Dette svarer til en anslået besparelse på ca. <span class="font-bold text-green-600">${co2SavedKg.toFixed(1)} kg CO2</span>.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+                            <h4 class="font-bold text-emerald-800 text-sm mb-1">🌿 Spild-Besparelse</h4>
+                            ${savingsHTML}
+                        </div>
+                        <div class="p-4 bg-sky-50 rounded-xl border border-sky-200">
+                            <h4 class="font-bold text-sky-800 text-sm mb-1">🌍 CO2-Besparelse</h4>
+                            <p class="text-sm text-slate-600">Anslået besparelse: <span class="font-bold ${co2SavedKg > 0 ? 'text-sky-600' : 'text-slate-400'}">${co2SavedKg.toFixed(1)} kg CO2</span></p>
+                        </div>
                     </div>
                 </div>
             `;
