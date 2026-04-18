@@ -671,6 +671,12 @@
             renderPiecesList();
         }
         function removeStock(id) { stockLengths = stockLengths.filter(s => s.id !== id); renderStockList(); }
+        function updateStockAmount(id, newAmount) {
+            const val = parseInt(newAmount);
+            if (isNaN(val) || val < 1) { renderStockList(); return; }
+            const s = stockLengths.find(s => s.id === id);
+            if (s) { s.amount = val; renderStockList(); }
+        }
 
         function handleCalculate() {
             resultsContainer.innerHTML = '<div id="print-header" class="hidden"></div>';
@@ -770,7 +776,18 @@
             `}).join('') || '<p class="text-sm text-slate-400">Ingen emner.</p>';
         }
         function renderStockList() {
-            stockListContainer.innerHTML = stockLengths.map(s => `<div class="list-item"><span class="font-mono text-sm font-medium">${s.amount} stk. <span class="text-slate-300">·</span> ${s.dimension} <span class="text-slate-300">·</span> ${s.length} mm</span><button onclick="removeStock(${s.id})" class="remove-btn flex-shrink-0">Fjern</button></div>`).join('') || '<p class="text-sm text-slate-400">Ingen lagerlængder.</p>';
+            stockListContainer.innerHTML = stockLengths.map(s => `
+                <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;border-left:3px solid #94a3b8;flex-wrap:nowrap;overflow:hidden">
+                    <input type="number" class="inline-edit" style="width:36px;flex-shrink:0;font-weight:700" value="${s.amount}" onchange="updateStockAmount(${s.id}, this.value)">
+                    <span style="color:#94a3b8;font-size:0.75rem;flex-shrink:0">stk.</span>
+                    <span style="color:#e2e8f0;flex-shrink:0">|</span>
+                    <span style="font-weight:600;color:#475569;flex-shrink:0;font-size:0.875rem">${s.dimension}</span>
+                    <span style="color:#e2e8f0;flex-shrink:0">|</span>
+                    <span style="font-weight:600;color:#475569;flex-shrink:0;font-size:0.875rem">${s.length}</span>
+                    <span style="color:#94a3b8;font-size:0.75rem;flex-shrink:0">mm</span>
+                    <button onclick="removeStock(${s.id})" style="margin-left:auto;flex-shrink:0;color:#94a3b8;font-size:0.8rem;font-weight:600;background:none;border:none;cursor:pointer;white-space:nowrap">Fjern</button>
+                </div>
+            `).join('') || '<p class="text-sm text-slate-400">Ingen lagerlængder.</p>';
         }
         function renderResults(res) {
             const wasteColor = res.wastePercentage > 25 ? 'text-red-600' : res.wastePercentage > 15 ? 'text-amber-600' : 'text-emerald-600';
