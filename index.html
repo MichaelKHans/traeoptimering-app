@@ -888,6 +888,29 @@
             saveState();
         };
 
+        window.applyOptimalPurchase = function(encodedSuggestions) {
+            try {
+                const suggestions = JSON.parse(decodeURIComponent(encodedSuggestions));
+                stockLengths = []; // Nulstil nuværende lager
+                for (const dim in suggestions) {
+                    const suggestion = suggestions[dim];
+                    if (suggestion.count > 0) {
+                        stockLengths.push({
+                            id: nextStockId++,
+                            dimension: dim,
+                            length: suggestion.length,
+                            amount: suggestion.count
+                        });
+                    }
+                }
+                renderStockList();
+                handleCalculate();
+                saveState();
+            } catch(e) {
+                console.error("Fejl ved anvendelse af optimalt indkøb:", e);
+            }
+        };
+
         // --- CORE LOGIC ---
         function handleAddDimension(e) {
             e.preventDefault();
@@ -1406,11 +1429,19 @@
 
             // Byg indkøbsforslags-HTML
             let purchaseHTML = '';
+            let hasPurchases = false;
             for (const dim in analysis.purchaseSuggestion) {
                 const suggestion = analysis.purchaseSuggestion[dim];
                 if (suggestion.count > 0) {
+                    hasPurchases = true;
                     purchaseHTML += `<li class="text-sm"><span class="font-semibold">${dim}</span>: Køb ${suggestion.count} stk. á ${suggestion.length} mm</li>`;
                 }
+            }
+            
+            let applyBtnHtml = '';
+            if (hasPurchases) {
+                const encodedSuggestions = encodeURIComponent(JSON.stringify(analysis.purchaseSuggestion));
+                applyBtnHtml = `<div class="mt-2"><button onclick="window.applyOptimalPurchase('${encodedSuggestions}')" class="text-xs text-slate-500 hover:text-emerald-600 underline underline-offset-2 transition-colors cursor-pointer focus:outline-none">Erstat lager med disse længder</button></div>`;
             }
 
             // Håndtér negativ besparelse
@@ -1435,6 +1466,7 @@
                         <h4 class="font-bold text-slate-700 text-sm mb-2">📦 Optimalt Indkøb</h4>
                         <p class="text-xs text-slate-500 mb-2">For at opnå mindst muligt spild, anbefales følgende indkøb:</p>
                         <ul class="list-disc list-inside space-y-1 text-sm">${purchaseHTML || '<li class="text-slate-400">Ingen indkøb nødvendigt.</li>'}</ul>
+                        ${applyBtnHtml}
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200">
