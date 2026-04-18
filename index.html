@@ -899,11 +899,18 @@
             }
             const globalMargin = parseInt(safetyMarginInput.value) || 0;
             
-            // Brug den avancerede analyse til at finde optimale bestillingslængder
-            const analysis = runAdvancedAnalysis(globalMargin);
+            // Hvad mangler vi?
+            const result = runOptimization(globalMargin, stockLengths, requiredPieces);
+            if (result.unfulfilled.length === 0) {
+                alert("Du har allerede nok træ på lageret til at skære alle emner!");
+                return;
+            }
+            
+            // Brug den avancerede analyse til at finde optimale bestillingslængder KUN for de manglende emner
+            const analysis = runAdvancedAnalysis(globalMargin, result.unfulfilled);
             
             let hasPurchases = false;
-            stockLengths = []; // Nulstil nuværende lager
+            // Nulstil IKKE det nuværende lager, vi tilføjer blot bestillinger
             for (const dim in analysis.purchaseSuggestion) {
                 const suggestion = analysis.purchaseSuggestion[dim];
                 if (suggestion.count > 0) {
@@ -912,7 +919,8 @@
                         id: nextStockId++,
                         dimension: dim,
                         length: suggestion.length,
-                        amount: suggestion.count
+                        amount: suggestion.count,
+                        type: 'bestilling'
                     });
                 }
             }
@@ -922,7 +930,7 @@
                 saveState();
                 handleCalculate();
             } else {
-                alert("Kunne ikke finde nogle optimale bestillingslængder.");
+                alert("Kunne ikke finde nogle optimale bestillingslængder for de manglende emner.");
             }
         };
 
@@ -937,7 +945,8 @@
                             id: nextStockId++,
                             dimension: dim,
                             length: suggestion.length,
-                            amount: suggestion.count
+                            amount: suggestion.count,
+                            type: 'bestilling'
                         });
                     }
                 }
@@ -1002,7 +1011,7 @@
             const fd = new FormData(e.target);
             const lastDim = fd.get('dimension');
             const lastLen = fd.get('length');
-            const stock = { id: nextStockId++, dimension: lastDim, length: parseInt(lastLen), amount: parseInt(fd.get('amount')) };
+            const stock = { id: nextStockId++, dimension: lastDim, length: parseInt(lastLen), amount: parseInt(fd.get('amount')), type: 'lager' };
             if (!stock.dimension || isNaN(stock.length)) return;
             stockLengths.push(stock);
             renderStockList();
@@ -1036,8 +1045,12 @@
             const globalMargin = parseInt(safetyMarginInput.value) || 0;
             try {
                 const result = runOptimization(globalMargin, stockLengths, requiredPieces);
+                if (result.unfulfilled.length > 0) {
+                    renderError("Du mangler træ på lageret til at skære alle emner. Tryk på knappen 'Tilføj bestillingslængder' under Lagerlængder for automatisk at udregne det manglende indkøb.");
+                    return;
+                }
                 renderResults(result);
-                const analysis = runAdvancedAnalysis(globalMargin);
+                const analysis = runAdvancedAnalysis(globalMargin, requiredPieces);
                 renderSustainabilityReport(analysis, result.plan);
                 showPrintButtons(true);
             } catch (error) { renderError(error.message); }
@@ -1049,17 +1062,18 @@
             piecesToProcess.forEach(p => {
                 if (!piecesByDim[p.dimension]) piecesByDim[p.dimension] = [];
                 const margin = p.customMargin !== null ? p.customMargin : globalMargin;
-                piecesByDim[p.dimension].push({ id: p.id, exactLength: p.length, cutLength: p.length + margin, margin: margin, tag: p.tag });
+                piecesByDim[p.dimension].push({ id: p.id, exactLength: p.length, cutLength: p.length + margin, margin: margin, tag: p.tag, dimension: p.dimension });
             });
 
             const stockByDim = {};
             currentStock.forEach(s => {
                 if (!stockByDim[s.dimension]) stockByDim[s.dimension] = [];
-                for (let i = 0; i < s.amount; i++) { stockByDim[s.dimension].push(s.length); }
+                for (let i = 0; i < s.amount; i++) { stockByDim[s.dimension].push({ length: s.length, type: s.type || 'lager' }); }
             });
 
             const finalPlan = {};
             let usedStockLen = 0, reqLen = 0;
+            const unfulfilledPieces = [];
 
             for (const dim in piecesByDim) {
                 // Låst sortering: Sorterer primært efter eksakt længde (netto). 
@@ -1072,27 +1086,29 @@
                 });
 
                 const available = stockByDim[dim] ? [...stockByDim[dim]] : [];
-                if (currentStock.length > 0 && available.length === 0) throw new Error(`Mangler lager til ${dim}`);
 
                 const used = [];
                 for (const piece of pieces) {
-                    reqLen += piece.cutLength;
                     let placed = false;
                     used.sort((a, b) => a.rem - b.rem);
                     for (const s of used) {
-                        if (s.rem >= piece.cutLength) { s.rem -= piece.cutLength; s.pieces.push(piece); placed = true; break; }
+                        if (s.rem >= piece.cutLength) { s.rem -= piece.cutLength; s.pieces.push(piece); placed = true; reqLen += piece.cutLength; break; }
                     }
                     if (!placed) {
-                        available.sort((a, b) => a - b);
-                        const idx = available.findIndex(l => l >= piece.cutLength);
-                        if (idx === -1) throw new Error(`Ikke nok træ (${dim}) til ${piece.exactLength}mm + margin`);
-                        const len = available.splice(idx, 1)[0];
-                        used.push({ originalLength: len, rem: len - piece.cutLength, pieces: [piece] });
+                        available.sort((a, b) => a.length - b.length);
+                        const idx = available.findIndex(l => l.length >= piece.cutLength);
+                        if (idx === -1) {
+                            unfulfilledPieces.push(piece);
+                        } else {
+                            const stockItem = available.splice(idx, 1)[0];
+                            used.push({ originalLength: stockItem.length, type: stockItem.type, rem: stockItem.length - piece.cutLength, pieces: [piece] });
+                            reqLen += piece.cutLength;
+                        }
                     }
                 }
-                finalPlan[dim] = used.map(s => { usedStockLen += s.originalLength; return { originalLength: s.originalLength, pieces: s.pieces, waste: s.rem }; });
+                finalPlan[dim] = used.map(s => { usedStockLen += s.originalLength; return { originalLength: s.originalLength, type: s.type, pieces: s.pieces, waste: s.rem }; });
             }
-            return { plan: finalPlan, totalUsedStockLength: usedStockLen, totalRequiredLength: reqLen, totalWaste: usedStockLen - reqLen, wastePercentage: usedStockLen > 0 ? ((usedStockLen - reqLen) / usedStockLen) * 100 : 0 };
+            return { plan: finalPlan, unfulfilled: unfulfilledPieces, totalUsedStockLength: usedStockLen, totalRequiredLength: reqLen, totalWaste: usedStockLen - reqLen, wastePercentage: usedStockLen > 0 ? ((usedStockLen - reqLen) / usedStockLen) * 100 : 0 };
         }
 
         // --- UI RENDERING ---
@@ -1135,18 +1151,23 @@
             `}).join('') || '<p class="text-sm text-slate-400">Ingen emner.</p>';
         }
         function renderStockList() {
-            stockListContainer.innerHTML = stockLengths.map(s => `
-                <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;border-left:3px solid #94a3b8;flex-wrap:nowrap;overflow:hidden">
+            stockListContainer.innerHTML = stockLengths.map(s => {
+                const isBestilling = s.type === 'bestilling';
+                const borderColor = isBestilling ? '#10b981' : '#94a3b8';
+                const badge = isBestilling ? `<span style="background:#d1fae5;color:#047857;font-size:0.65rem;padding:2px 6px;border-radius:999px;font-weight:700;margin-left:4px">Bestilling</span>` : '';
+                return `
+                <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;border-left:3px solid ${borderColor};flex-wrap:nowrap;overflow:hidden">
                     <input type="number" class="inline-edit" style="width:36px;flex-shrink:0;font-weight:700" value="${s.amount}" onchange="updateStockAmount(${s.id}, this.value)">
                     <span style="color:#94a3b8;font-size:0.75rem;flex-shrink:0">stk.</span>
-                    <span style="color:#e2e8f0;flex-shrink:0">|</span>
+                    ${badge}
+                    <span style="color:#e2e8f0;flex-shrink:0;margin-left:auto">|</span>
                     <span style="font-weight:600;color:#475569;flex-shrink:0;font-size:0.875rem">${s.dimension}</span>
                     <span style="color:#e2e8f0;flex-shrink:0">|</span>
                     <span style="font-weight:600;color:#475569;flex-shrink:0;font-size:0.875rem">${s.length}</span>
                     <span style="color:#94a3b8;font-size:0.75rem;flex-shrink:0">mm</span>
-                    <button onclick="removeStock(${s.id})" style="margin-left:auto;flex-shrink:0;color:#94a3b8;font-size:0.8rem;font-weight:600;background:none;border:none;cursor:pointer;white-space:nowrap">Fjern</button>
+                    <button onclick="removeStock(${s.id})" style="margin-left:8px;flex-shrink:0;color:#94a3b8;font-size:0.8rem;font-weight:600;background:none;border:none;cursor:pointer;white-space:nowrap">Fjern</button>
                 </div>
-            `).join('') || '<p class="text-sm text-slate-400">Ingen lagerlængder.</p>';
+            `}).join('') || '<p class="text-sm text-slate-400">Ingen lagerlængder.</p>';
         }
         function renderResults(res) {
             const wasteColor = res.wastePercentage > 25 ? 'text-red-600' : res.wastePercentage > 15 ? 'text-amber-600' : 'text-emerald-600';
@@ -1170,7 +1191,12 @@
                 // Tæl lagerlængder (det korrekte tal) og emner
                 const stockCount = dimPlan.length;
                 let totalPiecesInDim = 0;
-                dimPlan.forEach(stock => { totalPiecesInDim += stock.pieces.length; });
+                let lagerCount = 0;
+                let bestillingCount = 0;
+                dimPlan.forEach(stock => { 
+                    totalPiecesInDim += stock.pieces.length; 
+                    if(stock.type === 'bestilling') bestillingCount++; else lagerCount++;
+                });
 
                 // Optæl lagerlængder pr. type
                 const lengthCounts = {};
@@ -1186,6 +1212,15 @@
                     lengthLabel = uniqueLengths.sort((a, b) => a - b).map(l => `${lengthCounts[l]} stk á ${l} mm`).join(', ');
                 }
 
+                let headerText = '';
+                if (lagerCount > 0 && bestillingCount > 0) {
+                    headerText = `${lagerCount} stk. på lager <span class="text-gray-300 font-normal mx-1">+</span> <span class="text-emerald-700">${bestillingCount} stk. til bestilling</span>`;
+                } else if (bestillingCount > 0) {
+                    headerText = `<span class="text-emerald-700">${bestillingCount} stk. bestillingslængde${bestillingCount !== 1 ? 'r' : ''}</span>`;
+                } else {
+                    headerText = `${lagerCount} stk. lagerlængde${lagerCount !== 1 ? 'r' : ''}`;
+                }
+
                 // Beregn samlet spild for denne dimension
                 let dimWaste = 0;
                 dimPlan.forEach(s => { dimWaste += s.waste; });
@@ -1196,7 +1231,7 @@
                     <div class="bg-gray-100 px-4 py-3 border-b border-gray-200">
                         <h4 class="font-bold text-gray-800 text-lg">${dim}</h4>
                         <p class="text-sm text-gray-600 mt-0.5">
-                            <span class="font-semibold text-gray-800">${stockCount} stk. lager-/bestillingslængde${stockCount !== 1 ? 'r' : ''}</span> ${lengthLabel}
+                            <span class="font-semibold text-gray-800">${headerText}</span> ${lengthLabel}
                             <span class="mx-2 text-gray-300">|</span>
                             ${totalPiecesInDim} emne${totalPiecesInDim !== 1 ? 'r' : ''}
                             <span class="mx-2 text-gray-300">|</span>
@@ -1237,7 +1272,7 @@
                     const piecesOnStock = stock.pieces.length;
                     planHTML += `<div class="mt-3 stock-block">
                         <div class="flex items-baseline gap-2 mb-1">
-                            <span class="text-xs font-bold text-slate-700">Længde ${i + 1} af ${stockCount}</span>
+                            <span class="text-xs font-bold ${stock.type === 'bestilling' ? 'text-emerald-700' : 'text-slate-700'}">${stock.type === 'bestilling' ? `Bestillingslængde ${i + 1} af ${stockCount}` : `Lagerlængde ${i + 1} af ${stockCount}`}</span>
                             <span class="text-xs text-slate-300">—</span>
                             <span class="text-xs text-slate-500">${stock.originalLength} mm</span>
                             <span class="text-xs text-slate-300">—</span>
@@ -1370,10 +1405,10 @@
             };
             reader.readAsText(file);
         }
-        function runAdvancedAnalysis(globalMargin) {
+        function runAdvancedAnalysis(globalMargin, piecesToProcess) {
             // Gruppér individuelle emner pr. dimension
             const allPiecesByDim = {};
-            requiredPieces.forEach(p => {
+            piecesToProcess.forEach(p => {
                 if (!allPiecesByDim[p.dimension]) allPiecesByDim[p.dimension] = [];
                 allPiecesByDim[p.dimension].push(p);
             });
@@ -1459,7 +1494,55 @@
             let applyBtnHtml = '';
             if (hasPurchases) {
                 const encodedSuggestions = encodeURIComponent(JSON.stringify(analysis.purchaseSuggestion));
-                applyBtnHtml = `<div class="mt-2"><button onclick="window.applyOptimalPurchase('${encodedSuggestions}')" class="text-xs text-slate-500 hover:text-emerald-600 underline underline-offset-2 transition-colors cursor-pointer focus:outline-none">Erstat lager med disse længder</button></div>`;
+                applyBtnHtml = `<div class="mt-2"><button onclick="window.applyOptimalPurchase('${encodedSuggestions}')" class="text-xs text-slate-500 hover:text-emerald-600 underline underline-offset-2 transition-colors cursor-pointer focus:outline-none">Erstat hele lageret med disse længder</button></div>`;
+            }
+
+            // Tjek om vi har 'lager' i vores nuværende plan
+            const hasLager = stockLengths.some(s => s.type !== 'bestilling');
+            const bestillinger = stockLengths.filter(s => s.type === 'bestilling');
+            
+            let aktueltIndkoebBox = '';
+            if (bestillinger.length > 0) {
+                let aktueltIndkoebHTML = '';
+                const groupedBestillinger = {};
+                bestillinger.forEach(b => {
+                    const key = `${b.dimension}-${b.length}`;
+                    if (!groupedBestillinger[key]) groupedBestillinger[key] = { ...b, amount: 0 };
+                    groupedBestillinger[key].amount += b.amount;
+                });
+                for (const key in groupedBestillinger) {
+                    const item = groupedBestillinger[key];
+                    aktueltIndkoebHTML += `<li class="text-sm"><span class="font-semibold">${item.dimension}</span>: Køb ${item.amount} stk. á ${item.length} mm</li>`;
+                }
+
+                aktueltIndkoebBox = `
+                <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+                    <h4 class="font-bold text-emerald-800 text-sm mb-2">🛒 Indkøbsliste (Manglende træ)</h4>
+                    <p class="text-xs text-emerald-600 mb-2">Disse længder er automatisk tilføjet planen, og mangler at blive købt for at opgaven går op:</p>
+                    <ul class="list-disc list-inside space-y-1 text-sm text-emerald-800">${aktueltIndkoebHTML}</ul>
+                </div>
+                `;
+            }
+
+            let theoreticBox = '';
+            if (hasLager) {
+                theoreticBox = `
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-700 text-sm mb-2">📦 Alternativ: Optimalt Indkøb fra bunden</h4>
+                        <p class="text-xs text-slate-500 mb-2">Hvis du undlod at bruge dit eksisterende lager, og i stedet købte alt fra bunden, ville det optimale være:</p>
+                        <ul class="list-disc list-inside space-y-1 text-sm">${purchaseHTML || '<li class="text-slate-400">Ingen indkøb nødvendigt.</li>'}</ul>
+                        ${applyBtnHtml}
+                    </div>
+                `;
+            } else {
+                theoreticBox = `
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-700 text-sm mb-2">📦 Optimalt Indkøb</h4>
+                        <p class="text-xs text-slate-500 mb-2">For at opnå mindst muligt spild, anbefales følgende indkøb:</p>
+                        <ul class="list-disc list-inside space-y-1 text-sm">${purchaseHTML || '<li class="text-slate-400">Ingen indkøb nødvendigt.</li>'}</ul>
+                        ${applyBtnHtml}
+                    </div>
+                `;
             }
 
             // Håndtér besparelse visuelt
@@ -1480,12 +1563,8 @@
                     <h3 class="section-title">Bæredygtigheds- & Indkøbsanalyse</h3>
                 </div>
                 <div class="space-y-4 mt-4">
-                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
-                        <h4 class="font-bold text-slate-700 text-sm mb-2">📦 Optimalt Indkøb</h4>
-                        <p class="text-xs text-slate-500 mb-2">For at opnå mindst muligt spild, anbefales følgende indkøb:</p>
-                        <ul class="list-disc list-inside space-y-1 text-sm">${purchaseHTML || '<li class="text-slate-400">Ingen indkøb nødvendigt.</li>'}</ul>
-                        ${applyBtnHtml}
-                    </div>
+                    ${aktueltIndkoebBox}
+                    ${theoreticBox}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200">
                             <h4 class="font-bold text-emerald-800 text-sm mb-1">🌿 Spild-Besparelse</h4>
