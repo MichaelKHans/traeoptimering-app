@@ -566,7 +566,7 @@
             const summary = `<div class="mb-8 p-4 bg-gray-50 rounded-lg border text-sm"><h3 class="text-lg font-semibold mb-3">Samlet Oversigt</h3><div class="grid grid-cols-2 gap-2"><span>Anvendt træ:</span><span class="font-bold text-right">${(res.totalUsedStockLength/1000).toFixed(2)} m</span><span>Spild:</span><span class="font-bold text-red-600 text-right">${(res.totalWaste/1000).toFixed(2)} m (${res.wastePercentage.toFixed(1)}%)</span></div></div>`;
             resultsContainer.innerHTML += summary;
 
-            let planHTML = '<div class="space-y-6"><h3 class="text-lg font-semibold">Visuel Skæreplan</h3>';
+            let planHTML = '<div class="space-y-8"><h3 class="text-lg font-semibold">Visuel Skæreplan</h3>';
             
             const sortedDimensions = Object.keys(res.plan).sort();
 
@@ -574,25 +574,81 @@
                 const dimPlan = res.plan[dim];
                 if (dimPlan.length === 0) continue;
 
-                // Optæl det samlede antal stykker for denne dimension
+                // Tæl lagerlængder (det korrekte tal) og emner
+                const stockCount = dimPlan.length;
                 let totalPiecesInDim = 0;
-                dimPlan.forEach(stock => {
-                    totalPiecesInDim += stock.pieces.length;
-                });
-                
-                // Overskrift med antal stykker og dimension
-                let dimHeader = `${totalPiecesInDim} stk. ${dim}`;
+                dimPlan.forEach(stock => { totalPiecesInDim += stock.pieces.length; });
 
-                planHTML += `<div class="mt-4"><h4 class="font-bold text-gray-800 text-lg">${dimHeader}</h4>`;
-                
+                // Tjek om alle lagerlængder er ens
+                const firstLen = dimPlan[0].originalLength;
+                const allSameLength = dimPlan.every(s => s.originalLength === firstLen);
+                const lengthLabel = allSameLength ? `á ${firstLen} mm` : '(blandet)';
+
+                // Beregn samlet spild for denne dimension
+                let dimWaste = 0;
+                dimPlan.forEach(s => { dimWaste += s.waste; });
+
+                // --- Dimensions-sektions-header ---
+                planHTML += `
+                <div class="mt-6 border border-gray-200 rounded-xl overflow-hidden">
+                    <div class="bg-gray-100 px-4 py-3 border-b border-gray-200">
+                        <h4 class="font-bold text-gray-800 text-lg">${dim}</h4>
+                        <p class="text-sm text-gray-600 mt-0.5">
+                            <span class="font-semibold text-gray-800">${stockCount} lagerlængde${stockCount !== 1 ? 'r' : ''}</span> ${lengthLabel}
+                            <span class="mx-2 text-gray-300">|</span>
+                            ${totalPiecesInDim} emne${totalPiecesInDim !== 1 ? 'r' : ''}
+                            <span class="mx-2 text-gray-300">|</span>
+                            <span class="text-red-600">Spild: ${dimWaste} mm</span>
+                        </p>
+                    </div>
+
+                    <div class="px-4 py-3">`;
+
+                // --- Mini-skæreliste (kompakt tabel for overblik) ---
+                const pieceSummary = {};
+                dimPlan.forEach(stock => {
+                    stock.pieces.forEach(p => {
+                        const key = `${p.tag || 'Emne'}-${p.exactLength}`;
+                        if (!pieceSummary[key]) pieceSummary[key] = { tag: p.tag || 'Emne', length: p.exactLength, count: 0 };
+                        pieceSummary[key].count++;
+                    });
+                });
+
+                planHTML += `<table class="w-full text-xs mb-4 border border-gray-200 rounded">
+                    <thead><tr class="bg-gray-50 text-gray-500 uppercase">
+                        <th class="px-3 py-1.5 text-left font-medium">Emne</th>
+                        <th class="px-3 py-1.5 text-right font-medium">Antal</th>
+                        <th class="px-3 py-1.5 text-right font-medium">Netto længde</th>
+                    </tr></thead><tbody>`;
+                Object.values(pieceSummary).sort((a,b) => b.length - a.length).forEach(item => {
+                    planHTML += `<tr class="border-t border-gray-100">
+                        <td class="px-3 py-1 font-semibold text-indigo-700">${item.tag}</td>
+                        <td class="px-3 py-1 text-right">${item.count} stk.</td>
+                        <td class="px-3 py-1 text-right">${item.length} mm</td>
+                    </tr>`;
+                });
+                planHTML += `</tbody></table>`;
+
+                // --- Visuelle stokke ---
                 dimPlan.forEach((stock, i) => {
-                    planHTML += `<div class="mt-4 text-xs font-medium text-gray-600">Lager #${i+1} (${stock.originalLength}mm)<div class="stock-bar mt-1">`;
+                    const piecesOnStock = stock.pieces.length;
+                    planHTML += `<div class="mt-3">
+                        <div class="flex items-baseline gap-2 mb-1">
+                            <span class="text-xs font-bold text-gray-700">Lagerlængde ${i+1} af ${stockCount}</span>
+                            <span class="text-xs text-gray-400">—</span>
+                            <span class="text-xs text-gray-500">${stock.originalLength} mm</span>
+                            <span class="text-xs text-gray-400">—</span>
+                            <span class="text-xs text-gray-500">${piecesOnStock} emne${piecesOnStock !== 1 ? 'r' : ''}</span>
+                            ${stock.waste > 0 ? `<span class="text-xs text-red-500 ml-auto">Spild: ${stock.waste} mm</span>` : '<span class="text-xs text-green-600 ml-auto">Intet spild ✓</span>'}
+                        </div>
+                        <div class="stock-bar">`;
+
                     stock.pieces.forEach(p => {
                         const w = (p.cutLength / stock.originalLength) * 100;
                         const netW = (p.exactLength / p.cutLength) * 100;
                         const margW = (p.margin / p.cutLength) * 100;
                         
-                        // Farven bindes nu til ID'et, så den ikke skifter, når rækkefølgen låses
+                        // Farven bindes til ID'et, så den ikke skifter, når rækkefølgen låses
                         planHTML += `<div class="piece-wrapper" style="width:${w}%; background:${pieceColors[p.id % pieceColors.length]}">
                             <div class="piece-segment" style="width:${netW}%"><input class="editable font-bold text-center w-full" value="${p.tag}" onchange="updatePieceTag(${p.id}, this.value)"><span>${p.exactLength} mm</span></div>
                             ${p.margin > 0 ? `<div class="margin-segment" style="width:${margW}%"><input type="number" class="margin-input" value="${p.margin}" onchange="updatePieceMargin(${p.id}, this.value)"></div>` : ''}
@@ -601,7 +657,8 @@
                     if (stock.waste > 0) planHTML += `<div class="waste-segment" style="width:${(stock.waste/stock.originalLength)*100}%">Spild ${stock.waste}mm</div>`;
                     planHTML += `</div></div>`;
                 });
-                planHTML += `</div>`;
+
+                planHTML += `</div></div>`; // close px-4 py-3 and border container
             }
             resultsContainer.innerHTML += planHTML + '</div>';
         }
