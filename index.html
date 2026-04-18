@@ -80,19 +80,20 @@
 
         /* --- FORM INPUTS --- */
         .form-input {
-            border: 1px solid var(--border-color);
+            border: 1px solid #cbd5e1;
             border-radius: 0.5rem;
             padding: 0.5rem 0.75rem;
             font-size: 0.875rem;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
             background: white;
             color: var(--text-primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02) inset, 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .form-input:focus {
             outline: none;
             border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2), 0 1px 2px rgba(0,0,0,0.05) inset;
         }
 
         /* --- BUTTONS --- */
@@ -428,6 +429,32 @@
 
 <body class="p-4 md:p-8">
 
+    <!-- Print Modal -->
+    <div id="print-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-sm print-hide">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 transform transition-all">
+            <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                Print Skæreplan
+            </h3>
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Projektnavn</label>
+                    <input type="text" id="modal-print-project" class="form-input w-full" placeholder="f.eks. Carport">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Udført af (Dit navn / Firma)</label>
+                    <input type="text" id="modal-print-user" class="form-input w-full" placeholder="f.eks. Tømrerfirmaet A/S">
+                </div>
+            </div>
+            <div class="flex justify-end gap-3">
+                <button id="close-print-modal-btn" class="btn btn-ghost px-4 py-2 border border-slate-200">Annuller</button>
+                <button id="confirm-print-btn" class="btn btn-primary px-6 py-2 flex items-center gap-2">
+                    Print nu
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="max-w-7xl mx-auto print-container">
         <header class="text-center mb-8 print-hide">
             <div id="version-badge"
@@ -452,16 +479,6 @@
                         <h2 class="section-title">Projektstyring</h2>
                     </div>
                     <div class="space-y-4">
-                        
-                        <!-- Udskrift & Rapport Kort -->
-                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                            <div class="flex items-center gap-2 mb-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                                <h3 class="font-bold text-slate-700 text-sm">Udskrift & Rapport</h3>
-                            </div>
-                            <label for="print-project-name" class="block text-xs font-medium text-slate-500 mb-1">Projektnavn (vises på PDF)</label>
-                            <input type="text" id="print-project-name" class="form-input w-full bg-white" placeholder="f.eks. Legehus til haven">
-                        </div>
 
                         <!-- Lokal Browser-lagring Kort -->
                         <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
@@ -696,7 +713,6 @@
                 nextPieceId,
                 nextStockId,
                 safetyMargin: safetyMarginInput ? safetyMarginInput.value : "100",
-                printProjectName: printProjectNameInput ? printProjectNameInput.value : "",
                 projectName: projectNameInput ? projectNameInput.value : ""
             };
 
@@ -728,7 +744,6 @@
             nextPieceId = state.nextPieceId;
             nextStockId = state.nextStockId;
             if (safetyMarginInput) safetyMarginInput.value = state.safetyMargin;
-            if (printProjectNameInput) printProjectNameInput.value = state.printProjectName;
             if (projectNameInput) projectNameInput.value = state.projectName;
 
             renderAllLists();
@@ -764,7 +779,6 @@
         const svgPencil = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3 h-3 text-gray-400 inline-block ml-1 group-hover:text-gray-700 cursor-pointer pointer-events-none flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>`;
 
         // --- DOM ELEMENT REFERENCES ---
-        const printProjectNameInput = document.getElementById('print-project-name');
         const projectNameInput = document.getElementById('project-name');
         const saveProjectBtn = document.getElementById('save-project-btn');
         const savedProjectsSelect = document.getElementById('saved-projects-select');
@@ -807,7 +821,6 @@
         document.getElementById('undo-btn').addEventListener('click', handleUndo);
         document.getElementById('redo-btn').addEventListener('click', handleRedo);
         safetyMarginInput.addEventListener('change', saveState);
-        printProjectNameInput.addEventListener('change', saveState);
         projectNameInput.addEventListener('change', saveState);
 
         // Opdater versionsdato i toppen automatisk
@@ -1197,7 +1210,29 @@
         // --- ANDRE FUNKTIONER ---
         function renderError(m) { resultsContainer.innerHTML = `<div class="p-4 bg-red-50 text-red-700 rounded-xl border border-red-200 font-semibold text-sm">${m}</div>`; }
         function showPrintButtons(s) { printBtnDesktop.classList.toggle('hidden', !s); }
-        function handlePrint() { window.print(); }
+        function handlePrint() { 
+            document.getElementById('print-modal').classList.remove('hidden');
+        }
+
+        document.getElementById('close-print-modal-btn').addEventListener('click', () => {
+            document.getElementById('print-modal').classList.add('hidden');
+        });
+
+        document.getElementById('confirm-print-btn').addEventListener('click', () => {
+            const pName = document.getElementById('modal-print-project').value.trim() || 'Uden navn';
+            const uName = document.getElementById('modal-print-user').value.trim() || 'Ikke angivet';
+            const header = document.getElementById('print-header');
+            header.innerHTML = `
+                <div style="text-align:center; padding-bottom:1rem; margin-bottom:1rem; border-bottom:2px solid #000;">
+                    <h1 style="font-size:24px; font-weight:bold; margin:0 0 4px 0;">${pName}</h1>
+                    <p style="font-size:14px; margin:0; color:#475569;">Udført af: ${uName}</p>
+                </div>
+            `;
+            header.classList.remove('hidden');
+            document.getElementById('print-modal').classList.add('hidden');
+            window.print();
+        });
+
         function handleSaveProject() {
             const name = projectNameInput.value.trim();
             if (!name) { alert('Indtast venligst et navn til dit projekt.'); return; }
