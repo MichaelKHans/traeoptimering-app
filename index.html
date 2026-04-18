@@ -332,7 +332,7 @@
 
     <div class="max-w-7xl mx-auto print-container">
         <header class="text-center mb-8 print-hide">
-            <div class="inline-block mb-4 px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-semibold tracking-wider uppercase">v4.1</div>
+            <div id="version-badge" class="inline-block mb-4 px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-semibold tracking-wider uppercase">v4.2</div>
             <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Træoptimerings-App</h1>
             <p class="text-slate-400 mt-2 text-sm">Deling · Udskrift · Indkøbs- og Bæredygtighedsanalyse</p>
             <p id="version-info" class="text-xs text-slate-500 mt-1"></p>
@@ -634,7 +634,20 @@
         projectNameInput.addEventListener('change', saveState);
 
         // Opdater versionsdato i toppen automatisk
+        const modDate = new Date(document.lastModified);
         document.getElementById('version-info').innerText = "Sidst opdateret: " + document.lastModified;
+        
+        // Auto-generer version ud fra filens dato
+        const majorVersion = "4";
+        const mm = (modDate.getMonth() + 1).toString().padStart(2, '0');
+        const dd = modDate.getDate().toString().padStart(2, '0');
+        const hh = modDate.getHours().toString().padStart(2, '0');
+        const min = modDate.getMinutes().toString().padStart(2, '0');
+        
+        const badgeElement = document.getElementById('version-badge');
+        if (badgeElement) {
+            badgeElement.innerText = `v${majorVersion}.${mm}${dd}.${hh}${min}`;
+        }
 
         // --- COLOR PALETTE (tag-baseret: samme emne-navn = samme farve) ---
         const tagColorPalette = ['#a5b4fc', '#f9a8d4', '#86efac', '#fcd34d', '#7dd3fc', '#c4b5fd', '#fca5a5', '#6ee7b7', '#fdba74', '#67e8f9'];
@@ -1206,7 +1219,7 @@
             } else if (savedWasteLength === 0) {
                 savingsHTML = `<p class="text-sm text-slate-600">Optimeringen matcher den uoptimerede metode — ingen yderligere besparelse.</p>`;
             } else {
-                savingsHTML = `<p class="text-sm text-slate-600">Optimeringen bruger <span class="font-bold text-amber-600">${(Math.abs(savedWasteLength) / 1000).toFixed(2)} meter</span> mere end den naive metode. Dette kan ske når lagerlængderne er større end nødvendigt.</p>`;
+                savingsHTML = `<p class="text-sm text-slate-600">Optimeringen bruger <span class="font-bold text-amber-600">${(Math.abs(savedWasteLength) / 1000).toFixed(2)} meter</span> mere end den uoptimerede metode. Dette kan ske når lagerlængderne er større end nødvendigt.</p>`;
             }
 
             const html = `
