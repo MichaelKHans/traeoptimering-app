@@ -1528,16 +1528,30 @@
                     if (!groupedBestillinger[key]) groupedBestillinger[key] = { ...b, amount: 0 };
                     groupedBestillinger[key].amount += b.amount;
                 });
+                let emailBody = 'Indkøbsliste (Manglende træ):\\n\\n';
                 for (const key in groupedBestillinger) {
                     const item = groupedBestillinger[key];
                     aktueltIndkoebHTML += `<li class="text-sm"><span class="font-semibold">${item.dimension}</span>: Køb ${item.amount} stk. á ${item.length} mm</li>`;
+                    emailBody += `- ${item.dimension}: Køb ${item.amount} stk. á ${item.length} mm\\n`;
                 }
+
+                const emailLink = `mailto:?subject=Indkøbsliste fra Træoptimerings-App&body=${encodeURIComponent(emailBody)}`;
 
                 aktueltIndkoebBox = `
                 <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200">
-                    <h4 class="font-bold text-emerald-800 text-sm mb-2">🛒 Indkøbsliste (Manglende træ)</h4>
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-emerald-800 text-sm">🛒 Indkøbsliste (Manglende træ)</h4>
+                        <div class="flex gap-2">
+                            <button onclick="window.printShoppingList()" class="p-1.5 bg-white text-emerald-700 rounded shadow-sm border border-emerald-200 hover:bg-emerald-100 transition-colors tooltip" title="Print Indkøbsliste">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                            </button>
+                            <a href="${emailLink}" class="p-1.5 bg-white text-emerald-700 rounded shadow-sm border border-emerald-200 hover:bg-emerald-100 transition-colors tooltip flex items-center justify-center" title="Send som Mail">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            </a>
+                        </div>
+                    </div>
                     <p class="text-xs text-emerald-600 mb-2">Disse længder er automatisk tilføjet planen, og mangler at blive købt for at opgaven går op:</p>
-                    <ul class="list-disc list-inside space-y-1 text-sm text-emerald-800">${aktueltIndkoebHTML}</ul>
+                    <ul id="shopping-list-ul" class="list-disc list-inside space-y-1 text-sm text-emerald-800">${aktueltIndkoebHTML}</ul>
                 </div>
                 `;
             }
@@ -1619,6 +1633,39 @@
         populateProjectsDropdown();
         renderAllLists();
         saveState();
+
+        window.printShoppingList = function() {
+            const listHtml = document.getElementById('shopping-list-ul').innerHTML;
+            const printProject = document.getElementById('modal-print-project').value || projectNameInput.value || 'Projekt';
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Indkøbsliste - \${printProject}</title>
+                        <style>
+                            body { font-family: system-ui, -apple-system, sans-serif; padding: 2rem; color: #1e293b; max-width: 800px; margin: 0 auto; }
+                            h1 { border-bottom: 2px solid #cbd5e1; padding-bottom: 0.5rem; margin-bottom: 1.5rem; color: #0f172a; font-size: 1.5rem; }
+                            ul { list-style-type: none; padding: 0; }
+                            li { padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0; font-size: 1.1rem; }
+                            .header { display: flex; justify-content: space-between; margin-bottom: 2rem; color: #64748b; font-size: 0.9rem; }
+                            .font-semibold { font-weight: 600; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <span><strong>Projekt:</strong> \${printProject}</span>
+                            <span><strong>Dato:</strong> \${new Date().toLocaleDateString('da-DK')}</span>
+                        </div>
+                        <h1>Indkøbsliste</h1>
+                        <ul>\${listHtml}</ul>
+                        <script>
+                            window.onload = function() { setTimeout(() => { window.print(); window.close(); }, 250); }
+                        </script>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+        };
     </script>
 </body>
 
